@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Console</title>
+</head>
+  <script src="pixi/pixi.min.js"></script>
+<body>
+  <script type="text/javascript">
+    let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    const KSPACE = 32;
+    const KBACKSPACE = 8;
+    const KRETURN = 13;
+    const CCURSOR = String.fromCharCode(95);
+
+	function keyboardread() {
+	  key = {};
+	  key.code = undefined;
+	  key.press = undefined;
+	  key.release = undefined;
+	  //The `downHandler`123
+	  key.downHandler = event => {
+		key.code = event.keyCode;
+        if ( ((key.code > 64) && (key.code < 91))
+           ||((key.code > 47) && (key.code < 58))
+           || ( key.code == KSPACE ) || (key.code == KBACKSPACE) || (key.code == KRETURN)) {
+		  key.press();  
+  	      event.preventDefault();
+        }   
+	  };
+	
+	  //The `upHandler`
+	  key.upHandler = event => {
+		key.release();
+	    event.preventDefault();
+	  };
+	
+	  //Attach event listeners
+	  window.addEventListener(
+	    "keydown", key.downHandler.bind(key), false
+	  );
+	  window.addEventListener(
+	    "keyup", key.upHandler.bind(key), false
+	  );
+	  return key;
+	}
+
+
+      
+    let keyreader = keyboardread();
+    keyreader.press = () => {
+      indicatorText.text = keyreader.code;
+    
+      if (keyreader.code == KRETURN) {
+	 	richText.text = richText.text.slice(0, richText.text.length-1) + "\n" +CCURSOR;
+  	  }
+	  else if (keyreader.code != KBACKSPACE) {
+		richText.text = richText.text.slice(0, richText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+      }
+	  else if ((keyreader.code == KBACKSPACE) && (richText.text.length > 3)) {
+	    richText.text = richText.text.slice(0, richText.text.length-2) + CCURSOR;
+	  }
+	  else {
+      }
+
+	
+	}
+      	
+	let state;
+	
+	var app = new PIXI.Application(800, 600, {backgroundColor: 0x0});
+	document.body.appendChild(app.view);
+	
+	var style = new PIXI.TextStyle({
+	    fontFamily: 'asimov',
+	    fontSize: 20,
+	    fontStyle: 'normal',
+	    fontWeight: 'bold',
+	    fill: ['#00ff00', '#00aa00'], // gradient
+	    stroke: '#4a1850',
+	    strokeThickness: 0,
+	    dropShadow: false,
+	    dropShadowColor: '#000000',
+	    dropShadowBlur: 0,
+	    dropShadowAngle: 1,
+	    dropShadowDistance: 6,
+	    wordWrap: true,
+	    wordWrapWidth: 740
+	});
+	var indicatorstyle = new PIXI.TextStyle({
+	    fontFamily: 'asimov',
+	    fontSize: 20,
+	    fontStyle: 'normal',
+	    fontWeight: 'bold',
+	    fill: ['#ff0000', '#aa0000'], // gradient
+	    strokeThickness: 0,
+	    dropShadow: false,
+	    wordWrap: true,
+	    wordWrapWidth: 100
+	});	
+	
+	// Console input line
+	var richText = new PIXI.Text('> '+CCURSOR, style);
+	richText.x = 30;
+	richText.y = 350;
+	//for (index = 96; index<770; index++) {
+	//  richText.text = richText.text + String.fromCharCode(index) +" ";
+    //}
+
+	// Upper Right indicator for debug
+	var indicatorText = new PIXI.Text('[  ]', indicatorstyle);
+	indicatorText.x = 650;
+	indicatorText.y = 40 ;
+	
+	
+	
+	// Add elements to canvas
+	app.stage.addChild(richText);
+	app.stage.addChild(indicatorText);
+	   
+    //Set the game state
+    state = play;
+ 
+    //Start the game loop 
+    app.ticker.add(delta => gameLoop(delta));
+    
+    var date = new Date();
+    
+	function gameLoop(delta){
+	
+	  //Update the current game state:
+	  state(delta);
+	}
+	
+	function play(delta) {
+	//richText.x = richText.x+1;
+    indicatorText.text = date.getHours() + " " + date.getMinutes() +  " "  + date.getSeconds();
+	}
+    
+    
+  </script>
+</body>
+</html>
