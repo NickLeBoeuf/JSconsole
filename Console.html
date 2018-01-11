@@ -100,7 +100,7 @@
 	    strokeThickness: 0,
 	    dropShadow: false,
 	    wordWrap: true,
-	    wordWrapWidth: 100
+	    wordWrapWidth: 200
 	});	
 	
 	// Console input line
@@ -113,12 +113,13 @@
 
 	// Upper Right indicator for debug
 	var indicatorText = new PIXI.Text('[  ]', indicatorstyle);
-	indicatorText.x = 650;
+	indicatorText.x = 600;
 	indicatorText.y = 40 ;
 	
 	
-	
-	// Add elements to canvas
+	var timer = new Timer();
+
+        // Add elements to canvas
 	app.stage.addChild(richText);
 	app.stage.addChild(indicatorText);
 	   
@@ -128,8 +129,6 @@
     //Start the game loop 
     app.ticker.add(delta => gameLoop(delta));
     
-    var date = new Date();
-    
 	function gameLoop(delta){
 	
 	  //Update the current game state:
@@ -137,11 +136,42 @@
 	}
 	
 	function play(delta) {
-	//richText.x = richText.x+1;
-    indicatorText.text = date.getHours() + " " + date.getMinutes() +  " "  + date.getSeconds();
+	  timer.init(5000);
+	  indicatorText.text = heure() + " \n " + timer.get();
+	  if (timer.isrunning == 0) {timer.start()};
+
 	}
     
-    
+        function heure()
+        {
+          var date = new Date();
+  	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
+	}
+
+        function Timer() {
+	  this.value = new Date(59000); // 10 minutes
+	  this.isrunning = 0;
+	  this.starttime = undefined;
+	  this.timeout = 0;
+	}
+        Timer.prototype.init = function (val) { this.value.setTime(val);};
+        Timer.prototype.get = function () { 
+		if (this.timeout == 1) {return -1}
+		if (this.isrunning == 0) {return this.value.getMinutes() + " " + this.value.getSeconds();}
+                var currenttime = new Date();
+		var timeelapsed = new Date(currenttime - this.starttime);
+		var timeremaining = new Date(this.value - timeelapsed);
+		if (timeelapsed.valueOf() > this.value.valueOf()) {this.timeout=1; this.isrunning =1}
+		return timeremaining.getMinutes() + " " + timeremaining.getSeconds();
+	}
+
+        Timer.prototype.start = function () {
+		this.isrunning = 1;
+		this.timeout = 0;
+		this.starttime = new Date(); // initialized with the current time
+	}
+
+
   </script>
 </body>
 </html>
