@@ -12,6 +12,7 @@
       type = "canvas"
     }
 
+    // Keyboard related functions
     const KSPACE = 32;
     const KBACKSPACE = 8;
     const KRETURN = 13;
@@ -70,6 +71,13 @@
 	
 	}
       	
+    // Prompt Syntax Analyser
+    function PAnalyze() {
+	}
+    PAnalyze.prototype.get = function () {  } 	
+      	
+      	
+      	
 	let state;
 	
 	var app = new PIXI.Application(800, 600, {backgroundColor: 0x0});
@@ -107,13 +115,11 @@
 	var richText = new PIXI.Text('> '+CCURSOR, style);
 	richText.x = 30;
 	richText.y = 350;
-	//for (index = 96; index<770; index++) {
-	//  richText.text = richText.text + String.fromCharCode(index) +" ";
-    //}
 
-	// Upper Right indicator for debug
+
+	// Upper Right indicator for debug and coutdown
 	var indicatorText = new PIXI.Text('[  ]', indicatorstyle);
-	indicatorText.x = 600;
+	indicatorText.x = 550;
 	indicatorText.y = 40 ;
 	
 	
@@ -130,39 +136,40 @@
     app.ticker.add(delta => gameLoop(delta));
     
 	function gameLoop(delta){
-	
 	  //Update the current game state:
 	  state(delta);
+	  timer.init(600000);
+	  if (timer.isrunning == 0) {timer.start()};
 	}
 	
+	// MainLoop
 	function play(delta) {
-	  timer.init(5000);
-	  indicatorText.text = heure() + " \n " + timer.get();
-	  if (timer.isrunning == 0) {timer.start()};
+	  indicatorText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
 
 	}
     
-        function heure()
-        {
-          var date = new Date();
+    // Hour function
+    function heure() {
+      var date = new Date();
   	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
 	}
 
-        function Timer() {
+    // Timer class
+    function Timer() {
 	  this.value = new Date(59000); // 10 minutes
 	  this.isrunning = 0;
 	  this.starttime = undefined;
 	  this.timeout = 0;
 	}
-        Timer.prototype.init = function (val) { this.value.setTime(val);};
-        Timer.prototype.get = function () { 
-		if (this.timeout == 1) {return -1}
-		if (this.isrunning == 0) {return this.value.getMinutes() + " " + this.value.getSeconds();}
-                var currenttime = new Date();
-		var timeelapsed = new Date(currenttime - this.starttime);
-		var timeremaining = new Date(this.value - timeelapsed);
-		if (timeelapsed.valueOf() > this.value.valueOf()) {this.timeout=1; this.isrunning =1}
-		return timeremaining.getMinutes() + " " + timeremaining.getSeconds();
+    Timer.prototype.init = function (val) { this.value.setTime(val);};
+    Timer.prototype.get = function () { 
+	  if (this.timeout == 1) {return -1}
+	  if (this.isrunning == 0) {return this.value.getMinutes() + " " + this.value.getSeconds();}
+      var currenttime = new Date();
+	  var timeelapsed = new Date(currenttime - this.starttime);
+	  var timeremaining = new Date(this.value - timeelapsed);
+	  if (timeelapsed.valueOf() > this.value.valueOf()) {this.timeout=1; this.isrunning =1}
+	  return timeremaining.getMinutes() + " " + timeremaining.getSeconds();
 	}
 
         Timer.prototype.start = function () {
