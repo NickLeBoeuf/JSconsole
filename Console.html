@@ -54,18 +54,19 @@
       
     let keyreader = keyboardread();
     keyreader.press = () => {
-      indicatorText.text = keyreader.code;
+      timerText.text = keyreader.code;
     
       if (keyreader.code == KRETURN) {
-	 	PAnalyze(richText.text);
-	 	richText.text = richText.text.slice(0, richText.text.length-1) + "\n" +CCURSOR;
-	 	
+	 	PAnalyze(promptText.text);
+	 	promptText.text = PS1+CCURSOR;
+	 	//promptText.text = promptText.text.slice(0, promptText.text.length-1) + "\n" +CCURSOR;
+	 	 	
   	  }
 	  else if (keyreader.code != KBACKSPACE) {
-		richText.text = richText.text.slice(0, richText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
       }
-	  else if ((keyreader.code == KBACKSPACE) && (richText.text.length > 3)) {
-	    richText.text = richText.text.slice(0, richText.text.length-2) + CCURSOR;
+	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
+	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
 	  }
 	  else {
       }
@@ -74,14 +75,34 @@
 	}
       	
     // Prompt Syntax Analyser
-    function PAnalyze(input) {
+    function PAnalyze(inputwithcursor) {
+      var input = inputwithcursor.slice(2, inputwithcursor.length-1)
+      consoleText.text = "## "+input+"\n";
       switch (input) {
-		case "> TIMER START_":
+		case "TIMER START":
 		  timer.start();
+		  consoleText.text += "## Starting Timer";
 		  break;
-		case "> TIMER STOP_":
+		case "TIMER STOP":
 		  timer.stop();
+		  consoleText.text += "## Timer Stopped";
 		  break;
+		case "DEBUG":
+		  consoleText.text += "## Debug mode requested - Enter Password";
+		  debugrequest = 1;
+		  break;
+        case "NICK":
+          if (debugrequest == 1) {
+			consoleText.text += "## Entering Debug mode";
+			style.fill = ['#ffff00', '#aaaa00'];
+			debugmode = 1; debugrequest == 0;
+          }		    
+		case "":
+          debugrequest = 0;
+		  break;
+		default:
+		  debugrequest = 0;
+		  consoleText.text += "## Unknown command";
 	  }
 	}
     PAnalyze.prototype.get = function () {  } 	
@@ -109,7 +130,7 @@
 	    wordWrap: true,
 	    wordWrapWidth: 740
 	});
-	var indicatorstyle = new PIXI.TextStyle({
+	var timerstyle = new PIXI.TextStyle({
 	    fontFamily: 'asimov',
 	    fontSize: 20,
 	    fontStyle: 'normal',
@@ -120,24 +141,44 @@
 	    wordWrap: true,
 	    wordWrapWidth: 200
 	});	
+	var debugstyle = new PIXI.TextStyle({
+	    fontFamily: 'asimov',
+	    fontSize: 20,
+	    fontStyle: 'normal',
+	    fontWeight: 'bold',
+	    fill: ['#00ffff', '#00aaaa'], // gradient
+	    strokeThickness: 0,
+	    dropShadow: false,
+	    wordWrap: true,
+	    wordWrapWidth: 200
+	});	
 	
 	// Console input line
-	var richText = new PIXI.Text('> '+CCURSOR, style);
-	richText.x = 30;
-	richText.y = 350;
-
-
-	// Upper Right indicator for debug and coutdown
-	var indicatorText = new PIXI.Text('[  ]', indicatorstyle);
-	indicatorText.x = 550;
-	indicatorText.y = 40 ;
-	
+	const PS1 = "> ";
+	var promptText = new PIXI.Text(PS1+CCURSOR, style);
+	promptText.x = 30;
+	promptText.y = 400;
+	// Console output line
+	var consoleText = new PIXI.Text(' ## Waiting for Command ## ', style);
+	consoleText.x = 30;
+	consoleText.y = 300;	
+	// Upper Right field for clock and coutdown
+	var timerText = new PIXI.Text('[  ]', timerstyle);
+	timerText.x = 550;
+	timerText.y = 40 ;
+    // Upper left field for Debug Mode
+    var debugText = new PIXI.Text('ZombiCorp 4.2', debugstyle);
+    debugText.x = 20;
+    debugText.y = 10;
 	
 	var timer = new Timer();
-
+    var debugmode = 0 ; 
+    var debugrequest = 0;
         // Add elements to canvas
-	app.stage.addChild(richText);
-	app.stage.addChild(indicatorText);
+	app.stage.addChild(promptText);
+	app.stage.addChild(consoleText);
+	app.stage.addChild(timerText);
+	app.stage.addChild(debugText);
 	   
     //Set the game state
     state = play;
@@ -154,7 +195,7 @@
 	
 	// MainLoop
 	function play(delta) {
-	  indicatorText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
+	  timerText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
 
 	}
     
