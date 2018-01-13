@@ -57,7 +57,9 @@
       indicatorText.text = keyreader.code;
     
       if (keyreader.code == KRETURN) {
+	 	PAnalyze(richText.text);
 	 	richText.text = richText.text.slice(0, richText.text.length-1) + "\n" +CCURSOR;
+	 	
   	  }
 	  else if (keyreader.code != KBACKSPACE) {
 		richText.text = richText.text.slice(0, richText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
@@ -72,7 +74,15 @@
 	}
       	
     // Prompt Syntax Analyser
-    function PAnalyze() {
+    function PAnalyze(input) {
+      switch (input) {
+		case "> TIMER START_":
+		  timer.start();
+		  break;
+		case "> TIMER STOP_":
+		  timer.stop();
+		  break;
+	  }
 	}
     PAnalyze.prototype.get = function () {  } 	
       	
@@ -139,7 +149,7 @@
 	  //Update the current game state:
 	  state(delta);
 	  timer.init(600000);
-	  if (timer.isrunning == 0) {timer.start()};
+	  //if (timer.isrunning == 0) {timer.start()};
 	}
 	
 	// MainLoop
@@ -177,7 +187,9 @@
 		this.timeout = 0;
 		this.starttime = new Date(); // initialized with the current time
 	}
-
+        Timer.prototype.stop = function () {
+		this.isrunning = 0;
+	}
 
   </script>
 </body>
