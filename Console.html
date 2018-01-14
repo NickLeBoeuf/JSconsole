@@ -78,32 +78,53 @@
     function PAnalyze(inputwithcursor) {
       var input = inputwithcursor.slice(2, inputwithcursor.length-1)
       consoleText.text = "## "+input+"\n";
-      switch (input) {
-		case "TIMER START":
-		  timer.start();
-		  consoleText.text += "## Starting Timer";
-		  break;
-		case "TIMER STOP":
-		  timer.stop();
-		  consoleText.text += "## Timer Stopped";
-		  break;
-		case "DEBUG":
-		  consoleText.text += "## Debug mode requested - Enter Password";
-		  debugrequest = 1;
-		  break;
-        case "NICK":
-          if (debugrequest == 1) {
-			consoleText.text += "## Entering Debug mode";
-			style.fill = ['#ffff00', '#aaaa00'];
-			debugmode = 1; debugrequest == 0;
-          }		    
-		case "":
-          debugrequest = 0;
-		  break;
-		default:
+      
+      if (debugmode == 1) { // Commands in Debug mode
 		  debugrequest = 0;
-		  consoleText.text += "## Unknown command";
+	      switch (input) {
+			case "TIMER START":
+			  timer.start();
+			  consoleText.text += "## Starting Timer";
+			  break;
+			case "TIMER STOP":
+			  timer.stop();
+			  consoleText.text += "## Timer Stopped";
+			  break;
+			case "DEBUG OFF":
+			  consoleText.text += "## Entering User mode";
+			  debugmode = 0;
+			  break;	    
+			default:
+			  consoleText.text += "## Unknown command";
+		  }
+		}
+	  else {              // Commands in user mode	  
+	      switch (input) {
+			// Debug mode control
+			case "DEBUG":
+			  consoleText.text += "## Debug mode requested - Enter Password";
+			  debugrequest = 1;
+			  break;
+	        case "NICK":
+	          if (debugrequest == 1) {
+				consoleText.text += "## Entering Debug mode";
+				debugmode = 1; debugrequest == 0;
+			  }
+			  break;
+			// User commands
+			case "TIMER START":
+			  timer.start();
+			  consoleText.text += "## Starting Timer";
+			  break;
+			case "":
+	          debugrequest = 0;
+			  break;
+			default:
+			  debugrequest = 0;
+			  consoleText.text += "## Unknown command";
+		  }
 	  }
+	  
 	}
     PAnalyze.prototype.get = function () {  } 	
       	
@@ -174,7 +195,7 @@
 	var timer = new Timer();
     var debugmode = 0 ; 
     var debugrequest = 0;
-        // Add elements to canvas
+    // Add elements to canvas
 	app.stage.addChild(promptText);
 	app.stage.addChild(consoleText);
 	app.stage.addChild(timerText);
@@ -196,7 +217,9 @@
 	// MainLoop
 	function play(delta) {
 	  timerText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
-
+      if (debugmode == 1) 
+		  style.fill = ['#ffff00', '#aaaa00'];
+		  else style.fill = ['#00ff00', '#00aa00'];
 	}
     
     // Hour function
