@@ -16,6 +16,8 @@
     const KSPACE = 32;
     const KBACKSPACE = 8;
     const KRETURN = 13;
+    const KUPARROW = 38;
+    const KDOWNARROW = 40;
     const CCURSOR = String.fromCharCode(95);
 
 	function keyboardread() {
@@ -28,6 +30,7 @@
 		key.code = event.keyCode;
         if ( ((key.code > 64) && (key.code < 91))
            ||((key.code > 47) && (key.code < 58))
+           ||((key.code > 37) && (key.code < 41))
            || ( key.code == KSPACE ) || (key.code == KBACKSPACE) || (key.code == KRETURN)) {
 		  key.press();  
   	      event.preventDefault();
@@ -51,17 +54,18 @@
 	}
 
 
-      
+    // KEYBOARD READER 
     let keyreader = keyboardread();
     keyreader.press = () => {
       timerText.text = keyreader.code;
     
       if (keyreader.code == KRETURN) {
 	 	PAnalyze(promptText.text);
-	 	promptText.text = PS1+CCURSOR;
-	 	//promptText.text = promptText.text.slice(0, promptText.text.length-1) + "\n" +CCURSOR;
-	 	 	
+	 	promptText.text = PS1+CCURSOR; 	 	
   	  }
+  	  else if (keyreader.code == KUPARROW) {
+		promptText.text = "REPLAY: "+PAnalyze.lastcommand;
+	  }
 	  else if (keyreader.code != KBACKSPACE) {
 		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
       }
@@ -75,63 +79,72 @@
 	}
       	
     // Prompt Syntax Analyser
+    // Debug mode password is:
+    const DEBUGPASSWD="NICK";
     function PAnalyze(inputwithcursor) {
       var input = inputwithcursor.slice(2, inputwithcursor.length-1)
       consoleText.text = "## "+input+"\n";
+      this.lastcommand = input;
+      // Debug mode entry control
+      if ((debugrequest == 1) && (input == DEBUGPASSWD)) {
+		consoleText.text = "## Password correct\n## Entering Debug mode";
+		debugmode = 1; debugrequest == 0;
+	  }
+	  // Analyze Commands
+	  else {
       
-      if (debugmode == 1) { // Commands in Debug mode
-		  debugrequest = 0;
-	      switch (input) {
-			case "TIMER START":
-			  timer.start();
-			  consoleText.text += "## Starting Timer";
-			  break;
-			case "TIMER STOP":
-			  timer.stop();
-			  consoleText.text += "## Timer Stopped";
-			  break;
-			case "DEBUG OFF":
-			  consoleText.text += "## Entering User mode";
-			  debugmode = 0;
-			  break;	    
-			default:
-			  consoleText.text += "## Unknown command";
-		  }
-		}
-	  else {              // Commands in user mode	  
-	      switch (input) {
-			// Debug mode control
-			case "DEBUG":
-			  consoleText.text += "## Debug mode requested - Enter Password";
-			  debugrequest = 1;
-			  break;
-	        case "NICK":
-	          if (debugrequest == 1) {
-				consoleText.text += "## Entering Debug mode";
-				debugmode = 1; debugrequest == 0;
-			  }
-			  break;
-			// User commands
-			case "TIMER START":
-			  timer.start();
-			  consoleText.text += "## Starting Timer";
-			  break;
-			case "":
-	          debugrequest = 0;
-			  break;
-			default:
+	      if (debugmode == 1) { // Commands in Debug mode
 			  debugrequest = 0;
-			  consoleText.text += "## Unknown command";
+		      switch (input) {
+				case "TIMER START":
+				  timer.start(MAXTIMER);
+				  consoleText.text += "## Starting Timer";
+				  break;
+				case "TIMER STOP":
+				  timer.stop();
+				  consoleText.text += "## Timer Stopped";
+				  break;
+				case "TIMER RESET":
+				  timer.init(MAXTIMER);
+				  consoleText.text += "## Timer has been reset";
+				  break;
+				case "DEBUG OFF":
+				  consoleText.text += "## Entering User mode";
+				  debugmode = 0;
+				  break;	    
+				default:
+				  consoleText.text += "## Unknown command";
+			  }
+			}
+		  else {              // Commands in user mode	  
+		      switch (input) {
+				// Debug mode control
+				case "DEBUG":
+				  consoleText.text += "## Debug mode requested - Enter Password";
+				  debugrequest = 1;
+				  break;
+				// User commands
+				case "TIMER START":
+				  timer.start();
+				  consoleText.text += "## Starting Timer";
+				  break;
+				case "":
+		          debugrequest = 0;
+				  break;
+				default:
+				  debugrequest = 0;
+				  consoleText.text += "## Unknown command";
+			  }
 		  }
 	  }
-	  
 	}
     PAnalyze.prototype.get = function () {  } 	
       	
       	
     // Timer class
+    const MAXTIMER = 15000;
     function Timer() {
-	  this.maxvalue = new Date(59000); // 10 minutes
+	  this.maxvalue = new Date(MAXTIMER); 
 	  this.currentvalue = this.maxvalue;
 	  this.laststartvalue = this.maxvalue;
 	  this.isrunning = 0;
@@ -140,7 +153,8 @@
 	}
     Timer.prototype.init = function (val) {
 	  this.maxvalue.setTime(val);
-      this.currentalue=this.maxvalue;
+      this.currentvalue=this.maxvalue;
+	  this.laststartvalue = this.maxvalue;
       this.timeout = 0;
       this.isrunning = 0;
       };
@@ -238,9 +252,7 @@
 	app.stage.addChild(debugText);
 	
 	// init timer
-	timer.init(600000);   
-
-	timer.init(5000);   
+	timer.init(MAXTIMER);   
 
     //Set the game state
     state = play;
@@ -251,16 +263,16 @@
 	function gameLoop(delta){
 	  //Update the current game state:
 	  state(delta);
-	  //timer.init(600000);   
 //	  debugText.text = debugText.text + "1";
-//	  if (timer.isrunning == 0) {timer.start()};
 	}
 	
 	// MainLoop
 	function play(delta) {
 	  timerText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
-      if (debugmode == 1) 
+      if (debugmode == 1) {
 		  style.fill = ['#ffff00', '#aaaa00'];
+		  timerText.text += "\nKEY CODE: "+keyreader.code;
+	  }
 		  else style.fill = ['#00ff00', '#00aa00'];
 	}
     
