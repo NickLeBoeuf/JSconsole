@@ -12,7 +12,13 @@
       type = "canvas"
     }
 
-    // Keyboard related functions
+    // Hour function
+    function heure() {
+      var date = new Date();
+  	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
+	}
+	
+    // Keyboard related functions  /////////////////////////////////////
     const KSPACE = 32;
     const KBACKSPACE = 8;
     const KRETURN = 13;
@@ -25,7 +31,7 @@
 	  key.code = undefined;
 	  key.press = undefined;
 	  key.release = undefined;
-	  //The `downHandler`123
+	  //The `downHandler`
 	  key.downHandler = event => {
 		key.code = event.keyCode;
         if ( ((key.code > 64) && (key.code < 91))
@@ -36,13 +42,11 @@
   	      event.preventDefault();
         }   
 	  };
-	
 	  //The `upHandler`
 	  key.upHandler = event => {
 		key.release();
 	    event.preventDefault();
 	  };
-	
 	  //Attach event listeners
 	  window.addEventListener(
 	    "keydown", key.downHandler.bind(key), false
@@ -53,42 +57,60 @@
 	  return key;
 	}
 
-
-    // KEYBOARD READER 
-    let keyreader = keyboardread();
-    keyreader.press = () => {
-      timerText.text = keyreader.code;
-    
-      if (keyreader.code == KRETURN) {
-	 	PAnalyze(promptText.text);
-	 	promptText.text = PS1+CCURSOR; 	 	
-  	  }
-  	  else if (keyreader.code == KUPARROW) {
-		promptText.text = "REPLAY: "+PAnalyze.lastcommand;
-	  }
-	  else if (keyreader.code != KBACKSPACE) {
-		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
-      }
-	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
-	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
-	  }
-	  else {
-      }
-
-	
+    // Timer class /////////////////////////////////////////////////////
+    const MAXTIMER = 15000;
+    function Timer() {
+	  this.maxvalue = new Date(MAXTIMER); 
+	  this.currentvalue = this.maxvalue;
+	  this.laststartvalue = this.maxvalue;
+	  this.isrunning = 0;
+	  this.starttime = undefined;
+	  this.timeout = 0;
 	}
+    Timer.prototype.init = function (val) {
+	  this.maxvalue.setTime(val);
+      this.currentvalue=this.maxvalue;
+	  this.laststartvalue = this.maxvalue;
+      this.timeout = 0;
+      this.isrunning = 0;
+      };
+    Timer.prototype.get = function () { 
+	  if (this.timeout == 1) {return -1}
+	  if (this.isrunning == 0) {return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();}
+      var currenttime = new Date();
+	  var timeelapsed = new Date(currenttime - this.starttime);
+	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
+	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
+	  return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();
+	}
+    Timer.prototype.start = function () {
+		if (this.isrunning ==0) {
+			this.isrunning = 1;	
+			this.starttime = new Date(); // initialized with the current time
+		} // else no action
+	}
+    Timer.prototype.stop = function () {
+		this.isrunning = 0;
+		this.laststartvalue = this.currentvalue;
+	}      	
+      
+
       	
-    // Prompt Syntax Analyser
+    // Prompt Syntax Analyser  /////////////////////////////////////////
     // Debug mode password is:
     const DEBUGPASSWD="NICK";
-    function PAnalyze(inputwithcursor) {
+    function PAnalyze() {
+	  this.lastcommand = "";
+	}
+	
+    PAnalyze.prototype.command = function(inputwithcursor) {
       var input = inputwithcursor.slice(2, inputwithcursor.length-1)
       consoleText.text = "## "+input+"\n";
       this.lastcommand = input;
       // Debug mode entry control
       if ((debugrequest == 1) && (input == DEBUGPASSWD)) {
 		consoleText.text = "## Password correct\n## Entering Debug mode";
-		debugmode = 1; debugrequest == 0;
+		debugmode = 1; debugrequest == 0; this.lastcommand ="";
 	  }
 	  // Analyze Commands
 	  else {
@@ -141,44 +163,34 @@
     PAnalyze.prototype.get = function () {  } 	
       	
       	
-    // Timer class
-    const MAXTIMER = 15000;
-    function Timer() {
-	  this.maxvalue = new Date(MAXTIMER); 
-	  this.currentvalue = this.maxvalue;
-	  this.laststartvalue = this.maxvalue;
-	  this.isrunning = 0;
-	  this.starttime = undefined;
-	  this.timeout = 0;
-	}
-    Timer.prototype.init = function (val) {
-	  this.maxvalue.setTime(val);
-      this.currentvalue=this.maxvalue;
-	  this.laststartvalue = this.maxvalue;
-      this.timeout = 0;
-      this.isrunning = 0;
-      };
-    Timer.prototype.get = function () { 
-	  if (this.timeout == 1) {return -1}
-	  if (this.isrunning == 0) {return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();}
-      var currenttime = new Date();
-	  var timeelapsed = new Date(currenttime - this.starttime);
-	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
-	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
-	  return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();
+      	
+	
+
+    // KEYBOARD READER /////////////////////////////////////////////////
+    let keyreader = keyboardread();
+    keyreader.press = () => {
+      timerText.text = keyreader.code;
+      if (keyreader.code == KRETURN) {
+	 	//PAnalyze(promptText.text);
+	 	console.command(promptText.text);
+	 	promptText.text = PS1+CCURSOR; 	 	
+  	  }
+  	  else if (keyreader.code == KUPARROW) {
+		promptText.text = PS1+console.lastcommand+CCURSOR;
+	  }
+	  else if (keyreader.code == KDOWNARROW) {
+		promptText.text = PS1+CCURSOR;
+	  }
+	  else if (keyreader.code != KBACKSPACE) {
+		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+      }
+	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
+	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
+	  }
+	  else {
+      }
 	}
 
-    Timer.prototype.start = function () {
-		if (this.isrunning ==0) {
-			this.isrunning = 1;	
-			this.starttime = new Date(); // initialized with the current time
-		} // else no action
-	}
-    Timer.prototype.stop = function () {
-		this.isrunning = 0;
-		this.laststartvalue = this.currentvalue;
-	}      	
-      	
       	
 	let state;
 	
@@ -243,6 +255,7 @@
     debugText.y = 10;
 	
 	var timer = new Timer();
+	var console = new PAnalyze();
     var debugmode = 0 ; 
     var debugrequest = 0;
     // Add elements to canvas
@@ -276,11 +289,7 @@
 		  else style.fill = ['#00ff00', '#00aa00'];
 	}
     
-    // Hour function
-    function heure() {
-      var date = new Date();
-  	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
-	}
+
 
 
 
