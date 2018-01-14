@@ -129,6 +129,42 @@
     PAnalyze.prototype.get = function () {  } 	
       	
       	
+    // Timer class
+    function Timer() {
+	  this.maxvalue = new Date(59000); // 10 minutes
+	  this.currentvalue = this.maxvalue;
+	  this.laststartvalue = this.maxvalue;
+	  this.isrunning = 0;
+	  this.starttime = undefined;
+	  this.timeout = 0;
+	}
+    Timer.prototype.init = function (val) {
+	  this.maxvalue.setTime(val);
+      this.currentalue=this.maxvalue;
+      this.timeout = 0;
+      this.isrunning = 0;
+      };
+    Timer.prototype.get = function () { 
+	  if (this.timeout == 1) {return -1}
+	  if (this.isrunning == 0) {return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();}
+      var currenttime = new Date();
+	  var timeelapsed = new Date(currenttime - this.starttime);
+	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
+	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
+	  return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();
+	}
+
+    Timer.prototype.start = function () {
+		if (this.isrunning ==0) {
+			this.isrunning = 1;	
+			this.starttime = new Date(); // initialized with the current time
+		} // else no action
+	}
+    Timer.prototype.stop = function () {
+		this.isrunning = 0;
+		this.laststartvalue = this.currentvalue;
+	}      	
+      	
       	
 	let state;
 	
@@ -200,7 +236,12 @@
 	app.stage.addChild(consoleText);
 	app.stage.addChild(timerText);
 	app.stage.addChild(debugText);
-	   
+	
+	// init timer
+	timer.init(600000);   
+
+	timer.init(5000);   
+
     //Set the game state
     state = play;
  
@@ -210,8 +251,9 @@
 	function gameLoop(delta){
 	  //Update the current game state:
 	  state(delta);
-	  timer.init(600000);
-	  //if (timer.isrunning == 0) {timer.start()};
+	  //timer.init(600000);   
+//	  debugText.text = debugText.text + "1";
+//	  if (timer.isrunning == 0) {timer.start()};
 	}
 	
 	// MainLoop
@@ -228,32 +270,7 @@
   	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
 	}
 
-    // Timer class
-    function Timer() {
-	  this.value = new Date(59000); // 10 minutes
-	  this.isrunning = 0;
-	  this.starttime = undefined;
-	  this.timeout = 0;
-	}
-    Timer.prototype.init = function (val) { this.value.setTime(val);};
-    Timer.prototype.get = function () { 
-	  if (this.timeout == 1) {return -1}
-	  if (this.isrunning == 0) {return this.value.getMinutes() + " " + this.value.getSeconds();}
-      var currenttime = new Date();
-	  var timeelapsed = new Date(currenttime - this.starttime);
-	  var timeremaining = new Date(this.value - timeelapsed);
-	  if (timeelapsed.valueOf() > this.value.valueOf()) {this.timeout=1; this.isrunning =1}
-	  return timeremaining.getMinutes() + " " + timeremaining.getSeconds();
-	}
 
-        Timer.prototype.start = function () {
-		this.isrunning = 1;
-		this.timeout = 0;
-		this.starttime = new Date(); // initialized with the current time
-	}
-        Timer.prototype.stop = function () {
-		this.isrunning = 0;
-	}
 
   </script>
 </body>
