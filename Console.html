@@ -29,6 +29,15 @@
 	const TEXT_USERMODE=   "## Entering User mode";
 	const TEXT_DEBUGREQ=   "## Debug mode requested - Enter Password";
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
+    const TEXT_PASSWDCORRECT = "## Password correct - Raising Security Level";
+    // Game riddles
+    var riddles = new Map();// key is the password, value is 0 if not found.  
+    riddles.set("SOL0",0);  
+    riddles.set("SOL1",0);
+    riddles.set("SOL2",0);
+    riddles.set("SOL3",0);
+    riddles.set("SOL4",0);
+    
 
     function gameprogress() {
 	  this.level = TEXT_LEVEL0;
@@ -135,6 +144,7 @@
       	
     // Prompt Syntax Analyser  /////////////////////////////////////////
     // Debug mode password is:
+
     const DEBUGPASSWD="NICK";
     function PAnalyze() {
 	  this.lastcommand = "";
@@ -144,11 +154,23 @@
       var input = inputwithcursor.slice(2, inputwithcursor.length-1)
       consoleText.text = TEXT_PROMPT + "## "+input+"\n";
       this.lastcommand = input;
-      // Debug mode entry control
+	  // Password and level evaluation section
+	  debugText.text = " >> ";
+	  for (var [passwd, found] of riddles) {
+	    debugText.text += passwd;
+	    if ((input == passwd) && (found == 0)) {
+		  riddles.set(passwd, 1);
+		  securitylevel.level++;
+          consoleText.text += TEXT_PASSWDCORRECT;
+		  return;
+		}
+	  }
+	  // Debug mode entry control
       if ((debugrequest == 1) && (input == DEBUGPASSWD)) {
 		consoleText.text = TEXT_DEBUGENTRY;
 		debugmode = 1; debugrequest == 0; this.lastcommand ="";
 	  }
+
 	  // Analyze Commands
 	  else {
 	      if (debugmode == 1) { // Commands in Debug mode
