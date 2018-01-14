@@ -12,6 +12,43 @@
       type = "canvas"
     }
 
+	// Game texts
+	const TEXT_LEVEL0 =    "<< Security level 0 >>";
+	const TEXT_LEVEL1 =    "<< Security level 1 >>";
+	const TEXT_LEVEL2 =    "<< Security level 2 >>";
+	const TEXT_LEVEL3 =    "<< Security level 3 >>";
+	const TEXT_LEVEL4 =    "<< Security level 4 >>";
+	const TEXT_LEVEL5 =    "<< Security level 5 >>";
+	const TEXT_LEVEL6 =    "<< Security level 6 >>";
+	const TEXT_LEVEL7 =    "<< Security level 7 >>";
+	const TEXT_PROMPT =    "## Enter password to raise Security Level\n";
+    const TEXT_UNKNOWN =   "## Unknown password / command ";
+	const TEXT_TIMERSTART= "## Starting Timer";
+	const TEXT_TIMERSTOP=  "## Timer Stopped";
+	const TEXT_TIMERRESET= "## Timer has been reset";
+	const TEXT_USERMODE=   "## Entering User mode";
+	const TEXT_DEBUGREQ=   "## Debug mode requested - Enter Password";
+    const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
+
+    function gameprogress() {
+	  this.level = TEXT_LEVEL0;
+	}
+	gameprogress.prototype.getstring = function () {
+	  switch (this.level) {
+		  case 0: return TEXT_LEVEL0;
+		  case 1: return TEXT_LEVEL1;
+		  case 2: return TEXT_LEVEL2;
+		  case 3: return TEXT_LEVEL3;
+		  case 4: return TEXT_LEVEL4;
+		  case 5: return TEXT_LEVEL5;
+		  case 6: return TEXT_LEVEL6;
+		  case 7: return TEXT_LEVEL7;
+		  default : return TEXT_LEVEL7;
+		}
+	}
+	
+	
+	
     // Hour function
     function heure() {
       var date = new Date();
@@ -105,57 +142,56 @@
 	
     PAnalyze.prototype.command = function(inputwithcursor) {
       var input = inputwithcursor.slice(2, inputwithcursor.length-1)
-      consoleText.text = "## "+input+"\n";
+      consoleText.text = TEXT_PROMPT + "## "+input+"\n";
       this.lastcommand = input;
       // Debug mode entry control
       if ((debugrequest == 1) && (input == DEBUGPASSWD)) {
-		consoleText.text = "## Password correct\n## Entering Debug mode";
+		consoleText.text = TEXT_DEBUGENTRY;
 		debugmode = 1; debugrequest == 0; this.lastcommand ="";
 	  }
 	  // Analyze Commands
 	  else {
-      
 	      if (debugmode == 1) { // Commands in Debug mode
 			  debugrequest = 0;
 		      switch (input) {
 				case "TIMER START":
 				  timer.start(MAXTIMER);
-				  consoleText.text += "## Starting Timer";
+				  consoleText.text += TEXT_TIMERSTART;
 				  break;
 				case "TIMER STOP":
 				  timer.stop();
-				  consoleText.text += "## Timer Stopped";
+				  consoleText.text += TEXT_TIMERSTOP;
 				  break;
 				case "TIMER RESET":
 				  timer.init(MAXTIMER);
-				  consoleText.text += "## Timer has been reset";
+				  consoleText.text += TEXT_TIMERRESET;
 				  break;
 				case "DEBUG OFF":
-				  consoleText.text += "## Entering User mode";
+				  consoleText.text += TEXT_USERMODE;
 				  debugmode = 0;
 				  break;	    
 				default:
-				  consoleText.text += "## Unknown command";
+				  consoleText.text += TEXT_UNKNOWN;
 			  }
 			}
 		  else {              // Commands in user mode	  
 		      switch (input) {
 				// Debug mode control
 				case "DEBUG":
-				  consoleText.text += "## Debug mode requested - Enter Password";
+				  consoleText.text += TEXT_DEBUGREQ;
 				  debugrequest = 1;
 				  break;
 				// User commands
 				case "TIMER START":
 				  timer.start();
-				  consoleText.text += "## Starting Timer";
+				  consoleText.text += TEXT_TIMERSTART;
 				  break;
 				case "":
 		          debugrequest = 0;
 				  break;
 				default:
 				  debugrequest = 0;
-				  consoleText.text += "## Unknown command";
+				  consoleText.text += TEXT_UNKNOWN;
 			  }
 		  }
 	  }
@@ -235,14 +271,24 @@
 	    wordWrap: true,
 	    wordWrapWidth: 200
 	});	
-	
+	var infostyle = new PIXI.TextStyle({
+	    fontFamily: 'asimov',
+	    fontSize: 30,
+	    fontStyle: 'normal',
+	    fontWeight: 'bold',
+	    fill: ['#00ffff', '#00aaaa'], // gradient
+	    strokeThickness: 0,
+	    dropShadow: false,
+	    wordWrap: true,
+	    wordWrapWidth: 540
+	});	
 	// Console input line
 	const PS1 = "> ";
 	var promptText = new PIXI.Text(PS1+CCURSOR, style);
 	promptText.x = 30;
 	promptText.y = 400;
 	// Console output line
-	var consoleText = new PIXI.Text(' ## Waiting for Command ## ', style);
+	var consoleText = new PIXI.Text(TEXT_PROMPT, style);
 	consoleText.x = 30;
 	consoleText.y = 300;	
 	// Upper Right field for clock and coutdown
@@ -253,16 +299,23 @@
     var debugText = new PIXI.Text('ZombiCorp 4.2', debugstyle);
     debugText.x = 20;
     debugText.y = 10;
+    // Middle field for Security Level indicator
+    var securitylevelText = new PIXI.Text(TEXT_LEVEL0, infostyle);
+    securitylevelText.x = 130;
+    securitylevelText.y = 150;
 	
 	var timer = new Timer();
 	var console = new PAnalyze();
     var debugmode = 0 ; 
     var debugrequest = 0;
+    var securitylevel = new gameprogress();securitylevel.level = 0;
+    
     // Add elements to canvas
 	app.stage.addChild(promptText);
 	app.stage.addChild(consoleText);
 	app.stage.addChild(timerText);
 	app.stage.addChild(debugText);
+	app.stage.addChild(securitylevelText);
 	
 	// init timer
 	timer.init(MAXTIMER);   
@@ -281,8 +334,11 @@
 	
 	// MainLoop
 	function play(delta) {
-	  timerText.text = "       TIME: " +heure() + " \n" + "COUNTDOWN: "+timer.get();
-      if (debugmode == 1) {
+	  var time = new Date();
+	  timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
+	  if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
+	  
+	  if (debugmode == 1) {
 		  style.fill = ['#ffff00', '#aaaa00'];
 		  timerText.text += "\nKEY CODE: "+keyreader.code;
 	  }
