@@ -104,21 +104,45 @@
 	}
 
     // Timer class /////////////////////////////////////////////////////
-    const MAXTIMER = 15000;
+    const MAXTIMER = 900000;
+    if(!localStorage.getItem('timercurrentvalue')) {
+	  localStorage.setItem('timercurrentvalue', 0);
+	}
+    if(!localStorage.getItem('timerlaststartvalue')) {
+	  localStorage.setItem('timerlaststartvalue', MAXTIMER);
+	}
+    if(!localStorage.getItem('timerstarttime')) {
+	  localStorage.setItem('timerstarttime', MAXTIMER);
+	}
+    if(!localStorage.getItem('timerrunning')) {
+	  localStorage.setItem('timerrunning', 0);
+	}
+	
+	
     function Timer() {
 	  this.maxvalue = new Date(MAXTIMER); 
 	  this.currentvalue = this.maxvalue;
 	  this.laststartvalue = this.maxvalue;
-	  this.isrunning = 0;
+	  this.isrunning = undefined;
 	  this.starttime = undefined;
 	  this.timeout = 0;
 	}
+    Timer.prototype.restore = function () {
+      this.currentvalue   = new Date(localStorage.getItem('timercurrentvalue'));
+	  this.laststartvalue = new Date(localStorage.getItem('timerlaststartvalue'));
+      this.starttime      = new Date(localStorage.getItem('timerstarttime'));
+      this.isrunning      = localStorage.getItem('timerrunning');
+      // restore function does not stop the timer if it was running
+    };
     Timer.prototype.init = function (val) {
 	  this.maxvalue.setTime(val);
       this.currentvalue=this.maxvalue;
 	  this.laststartvalue = this.maxvalue;
       this.timeout = 0;
-      this.isrunning = 0;
+      this.isrunning = 0;   // init function stops the timer
+      localStorage.setItem('timercurrentvalue', this.currentvalue);
+      localStorage.setItem('timerlaststartvalue', this.laststartvalue);
+      localStorage.setItem('timerrunning', this.isrunning);
       };
     Timer.prototype.get = function () { 
 	  if (this.timeout == 1) {return -1}
@@ -126,18 +150,23 @@
       var currenttime = new Date();
 	  var timeelapsed = new Date(currenttime - this.starttime);
 	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
+	  localStorage.setItem('timercurrentvalue', this.currentvalue);
 	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
 	  return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();
 	}
     Timer.prototype.start = function () {
 		if (this.isrunning ==0) {
 			this.isrunning = 1;	
-			this.starttime = new Date(); // initialized with the current time
+      		this.starttime = new Date(); // initialized with the current time
+            localStorage.setItem('timerrunning', this.isrunning);
+      		localStorage.setItem('timerstarttime', this.starttime);
 		} // else no action
 	}
     Timer.prototype.stop = function () {
-		this.isrunning = 0;
-		this.laststartvalue = this.currentvalue;
+      this.isrunning = 0;
+	  this.laststartvalue = this.currentvalue;
+	  localStorage.setItem('timerrunning', this.isrunning);
+      localStorage.setItem('timerlaststartvalue', this.laststartvalue);
 	}      	
       
 
@@ -339,8 +368,8 @@
 	app.stage.addChild(debugText);
 	app.stage.addChild(securitylevelText);
 	
-	// init timer
-	timer.init(MAXTIMER);   
+	// init timer with saved values if they exist
+	timer.restore();   
 
     //Set the game state
     state = play;
