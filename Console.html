@@ -146,13 +146,13 @@
       };
     Timer.prototype.get = function () { 
 	  if (this.timeout == 1) {return -1}
-	  if (this.isrunning == 0) {return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();}
+	  if (this.isrunning == 0) {return ("0"+this.currentvalue.getMinutes()).slice(-2) + " " + ("0"+ this.currentvalue.getSeconds()).slice(-2);}
       var currenttime = new Date();
 	  var timeelapsed = new Date(currenttime - this.starttime);
 	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
 	  localStorage.setItem('timercurrentvalue', this.currentvalue);
 	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
-	  return this.currentvalue.getMinutes() + " " + this.currentvalue.getSeconds();
+	  return ("0"+this.currentvalue.getMinutes()).slice(-2) + " " + ("0"+ this.currentvalue.getSeconds()).slice(-2);
 	}
     Timer.prototype.start = function () {
 		if (this.isrunning ==0) {
@@ -168,9 +168,7 @@
 	  localStorage.setItem('timerrunning', this.isrunning);
       localStorage.setItem('timerlaststartvalue', this.laststartvalue);
 	}      	
-      
-
-      	
+           	
     // Prompt Syntax Analyser  /////////////////////////////////////////
     // Debug mode password is:
 
@@ -388,7 +386,7 @@
 	  var time = new Date();
 	  timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
 	  if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
-	  
+	  //securitylevelText.width += 1;
 	  if (debugmode == 1) {
 		  style.fill = ['#ffff00', '#aaaa00'];
 		  timerText.text += "\nKEY CODE: "+keyreader.code;
