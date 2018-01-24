@@ -26,6 +26,7 @@
 	const TEXT_TIMERSTART= "## Starting Timer";
 	const TEXT_TIMERSTOP=  "## Timer Stopped";
 	const TEXT_TIMERRESET= "## Timer has been reset";
+	const TEXT_TIMERCANTRESET = "## Timer can't be reset";
 	const TEXT_USERMODE=   "## Entering User mode";
 	const TEXT_DEBUGREQ=   "## Debug mode requested - Enter Password";
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
@@ -104,7 +105,8 @@
 	}
 
     // Timer class /////////////////////////////////////////////////////
-    const MAXTIMER = 900000;
+    //const MAXTIMER = 900000;
+    const MAXTIMER = 25000;
     if(!localStorage.getItem('timercurrentvalue')) {
 	  localStorage.setItem('timercurrentvalue', 0);
 	}
@@ -119,6 +121,10 @@
 	}
 	
 	
+	//const TIMERPHASE = [40,30,20,10,5,2,1,0]; // Timer got 8 phases
+	const TIMERPHASE = [21,18,15,12,9,6,3,0]; // Timer got 8 phases
+    //                  0   1  2  3 4 5 6 7
+
     function Timer() {
 	  this.maxvalue = new Date(MAXTIMER); 
 	  this.currentvalue = this.maxvalue;
@@ -126,6 +132,7 @@
 	  this.isrunning = undefined;
 	  this.starttime = undefined;
 	  this.timeout = 0;
+	  this.phase = undefined;
 	}
     Timer.prototype.restore = function () {
       this.currentvalue   = new Date(localStorage.getItem('timercurrentvalue'));
@@ -145,7 +152,20 @@
       localStorage.setItem('timerrunning', this.isrunning);
       };
     Timer.prototype.get = function () { 
-	  if (this.timeout == 1) {return -1}
+      // Timer phase section
+      //var remainingminutes = this.currentvalue.getMinutes();
+      var remainingminutes = this.currentvalue.getSeconds();
+      if      (remainingminutes > TIMERPHASE[0]) {this.phase = 0;} //PHASECOOLEST}
+      else if (remainingminutes > TIMERPHASE[1]) {this.phase = 1;} //PHASECOOLER;}
+      else if (remainingminutes > TIMERPHASE[2]) {this.phase = 2;} //PHASECOOL;}
+      else if (remainingminutes > TIMERPHASE[3]) {this.phase = 3;} // PHASEWARM;}
+      else if (remainingminutes > TIMERPHASE[4])  {this.phase =4;} // PHASEWARMER;}
+      else if (remainingminutes > TIMERPHASE[5])  {this.phase =5;} //PHASEWARMEST;}
+      else if (remainingminutes > TIMERPHASE[6])  {this.phase =6;} //PHASEBURNT;}
+      else this.phase = 7; // PHASEALMOSTDEAD
+      
+      // Timer calculation
+	  if (this.timeout == 1) {this.phase = 8;return -1} // Timeout = PHASEDEAD
 	  if (this.isrunning == 0) {return ("0"+this.currentvalue.getMinutes()).slice(-2) + " " + ("0"+ this.currentvalue.getSeconds()).slice(-2);}
       var currenttime = new Date();
 	  var timeelapsed = new Date(currenttime - this.starttime);
@@ -204,7 +224,7 @@
 			  debugrequest = 0;
 		      switch (input) {
 				case "TIMER START":
-				  timer.start(MAXTIMER);
+				  timer.start();
 				  consoleText.text += TEXT_TIMERSTART;
 				  break;
 				case "TIMER STOP":
@@ -234,6 +254,14 @@
 				case "TIMER START":
 				  timer.start();
 				  consoleText.text += TEXT_TIMERSTART;
+				  break;
+				case "TIMER RESET":
+				  if (timer.timeout == 1) {  // Warning : #@ timer can be reset in user mode if timeout has been reached
+					timer.init(MAXTIMER);
+					consoleText.text += TEXT_TIMERRESET;
+				  } else {
+					consoleText.text += TEXT_TIMERCANTRESET 
+			      }
 				  break;
 				case "":
 		          debugrequest = 0;
@@ -342,7 +370,7 @@
 	consoleText.y = 300;	
 	// Upper Right field for clock and coutdown
 	var timerText = new PIXI.Text('[  ]', timerstyle);
-	timerText.x = 550;
+	timerText.x = 680;
 	timerText.y = 40 ;
     // Upper left field for Debug Mode
     var debugText = new PIXI.Text('ZombiCorp 4.2', debugstyle);
@@ -360,9 +388,9 @@
     var securitylevel = new gameprogress();securitylevel.level = 0;
     
     // Add elements to canvas
+	app.stage.addChild(timerText);
 	app.stage.addChild(promptText);
 	app.stage.addChild(consoleText);
-	app.stage.addChild(timerText);
 	app.stage.addChild(debugText);
 	app.stage.addChild(securitylevelText);
 	
@@ -384,7 +412,49 @@
 	// MainLoop
 	function play(delta) {
 	  var time = new Date();
-	  timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
+	  //timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
+	  if (timer.phase < 6) { timerText.text = timer.get(); }
+	  else timerText.text = timer.get();
+	  
+	  
+	  
+	  // debug ease: loop timer #@
+	  if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
+	  
+	  // Display countdown
+	    timerText.x = 680;
+	    timerText.y = 40 ;
+	    //timerText.width = 720;
+        //timerText.height = 520;
+        timerText.anchor.set(0.5,0.5);
+        timerText.rotation = timerText.rotation + 0.015; 
+        switch (timer.phase) {
+		case 0: {timerstyle.fontWeight = 'normal'; timerstyle.fontSize = 24; break}
+	    case 1: {timerstyle.fontWeight = 'bold';  timerstyle.fontSize = 24; break}
+	    case 2: {timerstyle.fontSize = 28; break}
+	    case 3: {timerstyle.fontSize = 32; break}
+	    case 4: {timerstyle.fontSize = 36; break}
+	    case 5: {timerstyle.fontSize = 40; break}
+	    case 6: {timerstyle.fontSize = 60;
+			     timerText.x = 40;
+	             timerText.y = 20;
+	             timerText.width = 720;
+                 timerText.height = 520;             
+	             break;}
+	    case 7: {timerstyle.fontSize = 48; break}
+	    default: timerstyle.fontSize = 20; 
+	}
+	
+	
+	    //fontSize: 20,
+	    //fontStyle: 'normal',
+	    //fontWeight: 'bold',
+	    //fill: ['#ff0000', '#aa0000'], // gradient
+	    //strokeThickness: 0,
+	    //dropShadow: false,
+	    //wordWrap: true,
+	    //wordWrapWidth: 200
+	  
 	  if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
 	  //securitylevelText.width += 1;
 	  if (debugmode == 1) {
