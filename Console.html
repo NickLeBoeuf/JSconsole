@@ -44,6 +44,8 @@
     riddles.set("SOL7",0);
     riddles.set("SOL8",0);  
     
+    //const MAXTIMER = 900000;
+    const MAXTIMER = 25000;    
 
     function gameprogress() {
 	  this.level = 0;
@@ -110,8 +112,7 @@
 	}
 
     // Timer class /////////////////////////////////////////////////////
-    //const MAXTIMER = 900000;
-    const MAXTIMER = 125000;
+
     if(!localStorage.getItem('timercurrentvalue')) {
 	  localStorage.setItem('timercurrentvalue', 0);
 	}
@@ -443,7 +444,7 @@
 	  if (securitylevel.level == MAXLEVEL) {state = win};
 	  
 	  // debug ease: loop timer #@
-	  if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
+	  //if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
 	  if (timer.timeout == 1) {state = lose;}
 	  
 	  // Display countdown
@@ -520,19 +521,31 @@
 	function win(delta) {
 		app.stage.removeChild(timerText);
 		app.stage.removeChild(promptText);
-		app.stage.removeChild(consoleText);
-		app.stage.addChild(debugText);
-		app.stage.addChild(securitylevelText);
-	    app.stage.addChild(backgroundimg);
+		//app.stage.removeChild(consoleText);
+		//app.stage.addChild(debugText);
+		//app.stage.addChild(securitylevelText);
+	    //app.stage.addChild(backgroundimg);
+	    
+	    consoleText.text = "Countdown stopped. Opening Doors to upper level.\n";
+	    securitylevelText.text = "WELL\nDONE";
+	    securitylevelText.anchor.set(0.5,0.5);
+	    securitylevelText.setTransform(300,150,3,3,securitylevelText.rotation);
+	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
+	    infostyle.fill = ['#ffff00', '#aaaa00']; 
 	}
 
 	function lose(delta) {
 		app.stage.removeChild(timerText);
 		app.stage.removeChild(promptText);
-		app.stage.removeChild(consoleText);
-		app.stage.addChild(debugText);
-		app.stage.addChild(securitylevelText);
-	    app.stage.addChild(backgroundimg);
+		
+	    consoleText.text = "Time Out. Opening External Doors. You're trapped with Zombies ! \n";
+	    securitylevelText.text = "YOU\nARE\nDEAD";
+	    securitylevelText.anchor.set(0.5,0.5);
+	    securitylevelText.setTransform(300,150,3,3,securitylevelText.rotation);
+	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
+	    infostyle.fill = ['#ff0000', '#aa0000']; 	
+	    
+	    //if (timer.timeout == 0) {state = play;}    
 	}
 
 
