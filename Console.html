@@ -6,6 +6,7 @@
 </head>
   <script src="pixi/pixi.min.js"></script>
 <body>
+  <body bgcolor="#000000">
   <script type="text/javascript">
     let type = "WebGL"
     if(!PIXI.utils.isWebGLSupported()){
@@ -13,14 +14,14 @@
     }
 
 	// Game texts
-	const TEXT_LEVEL0 =    "<< Security level 0 >>";
-	const TEXT_LEVEL1 =    "<< Security level 1 >>";
-	const TEXT_LEVEL2 =    "<< Security level 2 >>";
-	const TEXT_LEVEL3 =    "<< Security level 3 >>";
-	const TEXT_LEVEL4 =    "<< Security level 4 >>";
-	const TEXT_LEVEL5 =    "<< Security level 5 >>";
-	const TEXT_LEVEL6 =    "<< Security level 6 >>";
-	const TEXT_LEVEL7 =    "<< Security level 7 >>";
+	const TEXT_LEVEL0 =    "-= Security level 0 =-";
+	const TEXT_LEVEL1 =    "-= Security level 1 =-";
+	const TEXT_LEVEL2 =    "-= Security level 2 =-";
+	const TEXT_LEVEL3 =    "-= Security level 3 =-";
+	const TEXT_LEVEL4 =    "-= Security level 4 =-";
+	const TEXT_LEVEL5 =    "-= Security level 5 =-";
+	const TEXT_LEVEL6 =    "-= Security level 6 =-";
+	const TEXT_LEVEL7 =    "-= Security level 7 =-";
 	const TEXT_PROMPT =    "## Enter password to raise Security Level\n";
     const TEXT_UNKNOWN =   "## Unknown password / command ";
 	const TEXT_TIMERSTART= "## Starting Timer";
@@ -310,12 +311,14 @@
 	var app = new PIXI.Application(800, 600, {backgroundColor: 0x0});
 	document.body.appendChild(app.view);
 	
+	// The console main style
 	var style = new PIXI.TextStyle({
 	    fontFamily: 'asimov',
 	    fontSize: 20,
 	    fontStyle: 'normal',
 	    fontWeight: 'bold',
-	    fill: ['#00ff00', '#00aa00'], // gradient
+//	    fill: ['#7a9b30', '#5a7b10'], // gradient
+	    fill: ['#7f5c28', '#5f3c08'], // gradient
 	    stroke: '#4a1850',
 	    strokeThickness: 0,
 	    dropShadow: false,
@@ -353,7 +356,7 @@
 	    fontSize: 30,
 	    fontStyle: 'normal',
 	    fontWeight: 'bold',
-	    fill: ['#00ffff', '#00aaaa'], // gradient
+	    fill: ['#7f5c28', '#9f7c48'], // gradient
 	    strokeThickness: 0,
 	    dropShadow: false,
 	    wordWrap: true,
@@ -373,7 +376,7 @@
 	timerText.x = 680;
 	timerText.y = 40 ;
     // Upper left field for Debug Mode
-    var debugText = new PIXI.Text('ZombiCorp 4.2', debugstyle);
+    var debugText = new PIXI.Text('ZombiCorp 4.2', style);
     debugText.x = 20;
     debugText.y = 10;
     // Middle field for Security Level indicator
@@ -387,12 +390,28 @@
     var debugrequest = 0;
     var securitylevel = new gameprogress();securitylevel.level = 0;
     
+    
+    const img1 = ['img/black.jpg',0.5,0.5];
+    const img2 = ['img/blackglass.png',0.45,0.5];
+    const img3 = ['img/Layer1.png',0.5,0.5];
+    const img4 = ['img/white.jpg',0.5,0.5];
+    const img5 = ['img/white2.jpg',0.5,0.5];
+    
+    let backgroundimg = new PIXI.Sprite.fromImage(img3[0]);    
+    backgroundimg.setTransform(0,0,img2[1],img2[2]);
+//    backgroundimg.y =0;
+//    backgroundimg.scale.set(0.5,0.5);
+    
     // Add elements to canvas
 	app.stage.addChild(timerText);
 	app.stage.addChild(promptText);
 	app.stage.addChild(consoleText);
 	app.stage.addChild(debugText);
 	app.stage.addChild(securitylevelText);
+    app.stage.addChild(backgroundimg);
+	
+	
+	
 	
 	// init timer with saved values if they exist
 	timer.restore();   
@@ -426,24 +445,52 @@
 	    timerText.y = 40 ;
 	    //timerText.width = 720;
         //timerText.height = 520;
-        timerText.anchor.set(0.5,0.5);
-        timerText.rotation = timerText.rotation + 0.015; 
+        //timerText.anchor.set(0.5,0.5);
+        //timerText.rotation = timerText.rotation + 0.015; 
+        ///timer.phase = 5;
+        
+        timerText.x = 680;
+	    timerText.y = 20;
+	    timerText.scale.set(1,1);
+	    //timerText.width = undefined;
+        //timerText.height = undefined;             
+        timerstyle.fill = ['#578f38', '#376f18'];
         switch (timer.phase) {
 		case 0: {timerstyle.fontWeight = 'normal'; timerstyle.fontSize = 24; break}
 	    case 1: {timerstyle.fontWeight = 'bold';  timerstyle.fontSize = 24; break}
 	    case 2: {timerstyle.fontSize = 28; break}
 	    case 3: {timerstyle.fontSize = 32; break}
-	    case 4: {timerstyle.fontSize = 36; break}
-	    case 5: {timerstyle.fontSize = 40; break}
+	    case 4: {timerstyle.fontSize = 40;
+			     timerText.x = 680;
+	             timerText.y = 20;
+	             timerText.width = 100;
+                 timerText.height = 50;             
+           	     timerstyle.fill = ['#578f38', '#376f18'];
+           	     break}
+	    case 5: {timerstyle.fontSize = 50;
+			     timerText.x = 580;
+	             timerText.y = 20;
+	             timerText.width = 150;
+                 timerText.height = 75;             
+           	     timerstyle.fill = ['#e0c010', '#908005'];
+           	     break}
 	    case 6: {timerstyle.fontSize = 60;
+			     timerText.x = 480;
+	             timerText.y = 20;
+	             timerText.width = 300;
+                 timerText.height = 200;             
+           	     timerstyle.fill = ['#e03000', '#902000'];
+
+	             break;}
+	    case 7: {timerstyle.fontSize = 60;
 			     timerText.x = 40;
 	             timerText.y = 20;
 	             timerText.width = 720;
-                 timerText.height = 520;             
+                 timerText.height = 520;
+           	     timerstyle.fill = ['#e03000', '#902000'];             
 	             break;}
-	    case 7: {timerstyle.fontSize = 48; break}
 	    default: timerstyle.fontSize = 20; 
-	}
+	    }
 	
 	
 	    //fontSize: 20,
@@ -461,7 +508,7 @@
 		  style.fill = ['#ffff00', '#aaaa00'];
 		  timerText.text += "\nKEY CODE: "+keyreader.code;
 	  }
-		  else style.fill = ['#00ff00', '#00aa00'];
+		  //else //style.fill = ['#00ff00', '#00aa00'];
 	}
     
 
