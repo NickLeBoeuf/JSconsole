@@ -33,16 +33,20 @@
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
     const TEXT_PASSWDCORRECT = "## Password correct - Raising Security Level";
     // Game riddles
+    const MAXLEVEL = 1;
     var riddles = new Map();// key is the password, value is 0 if not found.  
-    riddles.set("SOL0",0);  
     riddles.set("SOL1",0);
     riddles.set("SOL2",0);
     riddles.set("SOL3",0);
     riddles.set("SOL4",0);
+    riddles.set("SOL5",0);
+    riddles.set("SOL6",0);
+    riddles.set("SOL7",0);
+    riddles.set("SOL8",0);  
     
 
     function gameprogress() {
-	  this.level = TEXT_LEVEL0;
+	  this.level = 0;
 	}
 	gameprogress.prototype.getstring = function () {
 	  switch (this.level) {
@@ -107,7 +111,7 @@
 
     // Timer class /////////////////////////////////////////////////////
     //const MAXTIMER = 900000;
-    const MAXTIMER = 25000;
+    const MAXTIMER = 125000;
     if(!localStorage.getItem('timercurrentvalue')) {
 	  localStorage.setItem('timercurrentvalue', 0);
 	}
@@ -203,9 +207,9 @@
       consoleText.text = TEXT_PROMPT + "## "+input+"\n";
       this.lastcommand = input;
 	  // Password and level evaluation section
-	  debugText.text = " >> ";
+	  //debugText.text = " >> ";
 	  for (var [passwd, found] of riddles) {
-	    debugText.text += passwd;
+	    //debugText.text += passwd;
 	    if ((input == passwd) && (found == 0)) {
 		  riddles.set(passwd, 1);
 		  securitylevel.level++;
@@ -388,7 +392,8 @@
 	var console = new PAnalyze();
     var debugmode = 0 ; 
     var debugrequest = 0;
-    var securitylevel = new gameprogress();securitylevel.level = 0;
+    var securitylevel = new gameprogress();
+
     
     
     const img1 = ['img/black.jpg',0.5,0.5];
@@ -435,10 +440,11 @@
 	  if (timer.phase < 6) { timerText.text = timer.get(); }
 	  else timerText.text = timer.get();
 	  
-	  
+	  if (securitylevel.level == MAXLEVEL) {state = win};
 	  
 	  // debug ease: loop timer #@
 	  if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
+	  if (timer.timeout == 1) {state = lose;}
 	  
 	  // Display countdown
 	    timerText.x = 680;
@@ -511,8 +517,23 @@
 		  //else //style.fill = ['#00ff00', '#00aa00'];
 	}
     
+	function win(delta) {
+		app.stage.removeChild(timerText);
+		app.stage.removeChild(promptText);
+		app.stage.removeChild(consoleText);
+		app.stage.addChild(debugText);
+		app.stage.addChild(securitylevelText);
+	    app.stage.addChild(backgroundimg);
+	}
 
-
+	function lose(delta) {
+		app.stage.removeChild(timerText);
+		app.stage.removeChild(promptText);
+		app.stage.removeChild(consoleText);
+		app.stage.addChild(debugText);
+		app.stage.addChild(securitylevelText);
+	    app.stage.addChild(backgroundimg);
+	}
 
 
   </script>
