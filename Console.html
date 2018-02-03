@@ -33,16 +33,16 @@
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
     const TEXT_PASSWDCORRECT = "## Password correct - Raising Security Level";
     // Game riddles
-    const MAXLEVEL = 1;
+    const MAXLEVEL = 1; // This indicates how many riddles must be solved to win
     var riddles = new Map();// key is the password, value is 0 if not found.  
-    riddles.set("SOL1",0);
-    riddles.set("SOL2",0);
-    riddles.set("SOL3",0);
-    riddles.set("SOL4",0);
-    riddles.set("SOL5",0);
-    riddles.set("SOL6",0);
-    riddles.set("SOL7",0);
-    riddles.set("SOL8",0);  
+    riddles.set("THESEE",0);
+    riddles.set("MORT",0);
+    riddles.set("25362",0);
+    riddles.set("SERPENT PYTHON",0);
+    riddles.set("TRENTE TROIS",0);
+    riddles.set("CHAT",0);
+    riddles.set("IL EST DEMENT",0);
+    riddles.set("XXX=30",0);  
     
     //const MAXTIMER = 900000;
     const MAXTIMER = 25000;    
@@ -78,6 +78,7 @@
     const KRETURN = 13;
     const KUPARROW = 38;
     const KDOWNARROW = 40;
+    const KEQUAL = 61;
     const CCURSOR = String.fromCharCode(95);
 
 	function keyboardread() {
@@ -91,7 +92,7 @@
         if ( ((key.code > 64) && (key.code < 91))
            ||((key.code > 47) && (key.code < 58))
            ||((key.code > 37) && (key.code < 41))
-           || ( key.code == KSPACE ) || (key.code == KBACKSPACE) || (key.code == KRETURN)) {
+           || ( key.code == KSPACE ) || (key.code == KBACKSPACE) || (key.code == KRETURN) || (key.code == KEQUAL)) {
 		  key.press();  
   	      event.preventDefault();
         }   
@@ -215,6 +216,7 @@
 		  riddles.set(passwd, 1);
 		  securitylevel.level++;
           consoleText.text += TEXT_PASSWDCORRECT;
+          //PIXI.sound.play('pager');
 		  return;
 		}
 	  }
@@ -288,7 +290,6 @@
     // KEYBOARD READER /////////////////////////////////////////////////
     let keyreader = keyboardread();
     keyreader.press = () => {
-      timerText.text = keyreader.code;
       if (keyreader.code == KRETURN) {
 	 	//PAnalyze(promptText.text);
 	 	console.command(promptText.text);
@@ -378,7 +379,7 @@
 	consoleText.y = 300;	
 	// Upper Right field for clock and coutdown
 	var timerText = new PIXI.Text('[  ]', timerstyle);
-	timerText.x = 680;
+	timerText.x = 650;
 	timerText.y = 40 ;
     // Upper left field for Debug Mode
     var debugText = new PIXI.Text('ZombiCorp 4.2', style);
@@ -416,7 +417,8 @@
 	app.stage.addChild(securitylevelText);
     app.stage.addChild(backgroundimg);
 	
-	
+	//PIXI.sound.add('pager', 'sound/pager.wav');
+    //PIXI.sound.play('pager');
 	
 	
 	// init timer with saved values if they exist
@@ -456,7 +458,7 @@
         //timerText.rotation = timerText.rotation + 0.015; 
         ///timer.phase = 5;
         
-        timerText.x = 680;
+        timerText.x = 650;
 	    timerText.y = 20;
 	    timerText.scale.set(1,1);
 	    //timerText.width = undefined;
@@ -468,7 +470,7 @@
 	    case 2: {timerstyle.fontSize = 28; break}
 	    case 3: {timerstyle.fontSize = 32; break}
 	    case 4: {timerstyle.fontSize = 40;
-			     timerText.x = 680;
+			     timerText.x = 650;
 	             timerText.y = 20;
 	             timerText.width = 100;
                  timerText.height = 50;             
@@ -519,13 +521,14 @@
 	}
     
 	function win(delta) {
-		app.stage.removeChild(timerText);
+		//app.stage.removeChild(timerText);
 		app.stage.removeChild(promptText);
 		//app.stage.removeChild(consoleText);
 		//app.stage.addChild(debugText);
 		//app.stage.addChild(securitylevelText);
 	    //app.stage.addChild(backgroundimg);
-	    
+
+	    timer.stop();
 	    consoleText.text = "Countdown stopped. Opening Doors to upper level.\n";
 	    securitylevelText.text = "WELL\nDONE";
 	    securitylevelText.anchor.set(0.5,0.5);
@@ -545,6 +548,7 @@
 	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
 	    infostyle.fill = ['#ff0000', '#aa0000']; 	
 	    
+	    // When dead, simply type blindly TIMER RESET and reload the page
 	    //if (timer.timeout == 0) {state = play;}    
 	}
 
