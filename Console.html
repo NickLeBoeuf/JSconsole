@@ -5,6 +5,7 @@
   <title>Console</title>
 </head>
   <script src="pixi/pixi.min.js"></script>
+  <script src="pixi/pixi-sound.js"></script>
 <body>
   <body bgcolor="#000000">
   <script type="text/javascript">
@@ -216,7 +217,7 @@
 		  riddles.set(passwd, 1);
 		  securitylevel.level++;
           consoleText.text += TEXT_PASSWDCORRECT;
-          //PIXI.sound.play('pager');
+          pagersound.play();
 		  return;
 		}
 	  }
@@ -249,6 +250,7 @@
 				  break;	    
 				default:
 				  consoleText.text += TEXT_UNKNOWN;
+				  syntaxerrorsound.play();
 			  }
 			}
 		  else {              // Commands in user mode	  
@@ -293,7 +295,8 @@
       if (keyreader.code == KRETURN) {
 	 	//PAnalyze(promptText.text);
 	 	console.command(promptText.text);
-	 	promptText.text = PS1+CCURSOR; 	 	
+        promptText.text = PS1+CCURSOR;
+	    returnsound.play();
   	  }
   	  else if (keyreader.code == KUPARROW) {
 		promptText.text = PS1+console.lastcommand+CCURSOR;
@@ -303,9 +306,11 @@
 	  }
 	  else if (keyreader.code != KBACKSPACE) {
 		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+		clicksound.play();
       }
 	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
 	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
+	    backspacesound.play();
 	  }
 	  else {
       }
@@ -417,9 +422,12 @@
 	app.stage.addChild(securitylevelText);
     app.stage.addChild(backgroundimg);
 	
-	//PIXI.sound.add('pager', 'sound/pager.wav');
-    //PIXI.sound.play('pager');
 	
+	pagersound = new PIXI.sound.Sound.from({url: 'sound/pager2.wav'});
+	clicksound = new PIXI.sound.Sound.from({url: 'sound/click.wav'});
+	returnsound = new PIXI.sound.Sound.from({url: 'sound/return.wav'});
+	backspacesound = new PIXI.sound.Sound.from({url: 'sound/backspace.wav'});
+	syntaxerrorsound = new PIXI.sound.Sound.from({url: 'sound/syntaxerror.wav'});
 	
 	// init timer with saved values if they exist
 	timer.restore();   
