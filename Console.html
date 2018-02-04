@@ -8,12 +8,14 @@
   <script src="pixi/pixi-sound.js"></script>
 <body>
   <body bgcolor="#000000">
+
   <script type="text/javascript">
     let type = "WebGL"
     if(!PIXI.utils.isWebGLSupported()){
       type = "canvas"
     }
 
+   
 	// Game texts
 	const TEXT_LEVEL0 =    "-= Security level 0 =-";
 	const TEXT_LEVEL1 =    "-= Security level 1 =-";
@@ -33,17 +35,7 @@
 	const TEXT_DEBUGREQ=   "## Debug mode requested - Enter Password";
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
     const TEXT_PASSWDCORRECT = "## Password correct - Raising Security Level";
-    // Game riddles
-    const MAXLEVEL = 1; // This indicates how many riddles must be solved to win
-    var riddles = new Map();// key is the password, value is 0 if not found.  
-    riddles.set("THESEE",0);
-    riddles.set("MORT",0);
-    riddles.set("25362",0);
-    riddles.set("SERPENT PYTHON",0);
-    riddles.set("TRENTE TROIS",0);
-    riddles.set("CHAT",0);
-    riddles.set("IL EST DEMENT",0);
-    riddles.set("XXX=30",0);  
+
     
     //const MAXTIMER = 900000;
     const MAXTIMER = 25000;    
@@ -100,9 +92,10 @@
 	  };
 	  //The `upHandler`
 	  key.upHandler = event => {
-		key.release();
+		//key.release();
 	    event.preventDefault();
 	  };
+	  
 	  //Attach event listeners
 	  window.addEventListener(
 	    "keydown", key.downHandler.bind(key), false
@@ -279,6 +272,7 @@
 				default:
 				  debugrequest = 0;
 				  consoleText.text += TEXT_UNKNOWN;
+				  syntaxerrorsound.play();
 			  }
 		  }
 	  }
@@ -286,7 +280,17 @@
     PAnalyze.prototype.get = function () {  } 	
       	
       	
-      	
+    // Game riddles
+    const MAXLEVEL = 2; // This indicates how many riddles must be solved to win
+    var riddles = new Map();// key is the password, value is 0 if not found.  
+    riddles.set("THESEE",0);
+    riddles.set("MORT",0);
+    riddles.set("25362",0);
+    riddles.set("SERPENT PYTHON",0);
+    riddles.set("TRENTE TROIS",0);
+    riddles.set("CHAT",0);
+    riddles.set("IL EST DEMENT",0);
+    riddles.set("XXX=30",0);        	
 	
 
     // KEYBOARD READER /////////////////////////////////////////////////
@@ -319,7 +323,7 @@
       	
 	let state;
 	
-	var app = new PIXI.Application(800, 600, {backgroundColor: 0x0});
+	var app = new PIXI.Application(800,600,{backgroundColor: 0x0} );
 	document.body.appendChild(app.view);
 	
 	// The console main style
@@ -411,9 +415,7 @@
     
     let backgroundimg = new PIXI.Sprite.fromImage(img3[0]);    
     backgroundimg.setTransform(0,0,img2[1],img2[2]);
-//    backgroundimg.y =0;
-//    backgroundimg.scale.set(0.5,0.5);
-    
+   
     // Add elements to canvas
 	app.stage.addChild(timerText);
 	app.stage.addChild(promptText);
@@ -428,7 +430,8 @@
 	returnsound = new PIXI.sound.Sound.from({url: 'sound/return.wav'});
 	backspacesound = new PIXI.sound.Sound.from({url: 'sound/backspace.wav'});
 	syntaxerrorsound = new PIXI.sound.Sound.from({url: 'sound/syntaxerror.wav'});
-	
+	opendoorsound = new PIXI.sound.Sound.from({url: 'sound/opendoor.mp3'});
+
 	// init timer with saved values if they exist
 	timer.restore();   
 
@@ -441,17 +444,21 @@
 	function gameLoop(delta){
 	  //Update the current game state:
 	  state(delta);
-//	  debugText.text = debugText.text + "1";
 	}
 	
 	// MainLoop
 	function play(delta) {
+		
 	  var time = new Date();
 	  //timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
 	  if (timer.phase < 6) { timerText.text = timer.get(); }
 	  else timerText.text = timer.get();
 	  
-	  if (securitylevel.level == MAXLEVEL) {state = win};
+	  if (securitylevel.level == MAXLEVEL) {
+		  state = win;
+		  pagersound.stop();
+		  opendoorsound.play();
+	  };
 	  
 	  // debug ease: loop timer #@
 	  //if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
@@ -535,7 +542,7 @@
 		//app.stage.addChild(debugText);
 		//app.stage.addChild(securitylevelText);
 	    //app.stage.addChild(backgroundimg);
-
+        
 	    timer.stop();
 	    consoleText.text = "Countdown stopped. Opening Doors to upper level.\n";
 	    securitylevelText.text = "WELL\nDONE";
