@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Console</title>
+</head>
+  <script src="pixi/pixi.min.js"></script>
+  <script src="pixi/pixi-sound.js"></script>
+<body>
+  <body bgcolor="#222222">
+
+  <script type="text/javascript">
+    let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+	let state;
+	
+	var app = new PIXI.Application(800,600,{backgroundColor: 0x0} );
+	document.body.appendChild(app.view);
+	
+	// The console main style
+	var style = new PIXI.TextStyle({
+	    fontFamily: 'asimov',
+	    fontSize: 20,
+	    fontStyle: 'normal',
+	    fontWeight: 'bold',
+//	    fill: ['#FFFF30', '#AAAA10'], // gradient
+	    fill: ['#FFFF28', '#AAAAff'], // gradient
+	    stroke: '#4a1850',
+	    strokeThickness: 0,
+	    dropShadow: false,
+	    dropShadowColor: '#000000',
+	    dropShadowBlur: 0,
+	    dropShadowAngle: 1,
+	    dropShadowDistance: 6,
+	    wordWrap: true,
+	    wordWrapWidth: 740
+	});
+
+	// Console input line
+	const PS1 = "> ";
+	var promptText = new PIXI.Text("The Map", style);
+	promptText.x = 30;
+	promptText.y = 400;
+
+    const img1 = ['img/black.jpg',0.5,0.5];
+    const img2 = ['img/blackglass.png',0.45,0.5];
+    const img3 = ['img/Layer1.png',0.5,0.5];
+    const img4 = ['img/white.jpg',0.5,0.5];
+    const img5 = ['img/white2.jpg',0.5,0.5];
+    
+    let backgroundimg = new PIXI.Sprite.fromImage(img4[0]);    
+    //backgroundimg.setTransform(0,0,img3[1],img4[2]);
+   
+
+ 
+	var graphics = new PIXI.Graphics();
+
+	// set a fill and line style
+	
+	
+    // Add elements to canvas
+	app.stage.addChild(promptText);
+	//app.stage.addChild(backgroundimg);
+	app.stage.addChild(graphics);
+		
+    //Set the game state
+    state = play;
+ 	const WHITE = 0xFFFFFF;
+	xi = 10;
+	yi = 10;
+	color = WHITE;
+	
+	// Define the map
+	function Map(size) {
+	  this.width = size;
+	  this.height = size;
+	  this.initcolor = 0x555555;
+	  this.val = new Array(this.width); 
+      for (var i = 0; i < this.width; i++) {
+        this.val[i] = new Array(this.height);
+      }
+	}
+	
+    Map.prototype.init = function() {
+	  for (i=0; i<this.width; i++) {
+	    for (j=0; j<this.height; j++) {
+		  this.val[i][j] = this.initcolor;
+        }
+      }    	    
+	}
+
+    Map.prototype.fillrandom = function() {
+	  for (i=0; i<this.width; i++) {
+	    for (j=0; j<this.height; j++) {
+		  var randval = Math.floor((Math.random()*255));
+		  var greycol = randval  + randval*256 + randval * 65536;
+		  this.val[i][j] = greycol;
+        }
+      }    	    
+	}	
+	Map.prototype.draw = function(x,y,scale,graph) {
+	  for (i=0; i<this.width; i++) {
+	    for (j=0; j<this.height; j++) {
+		  drawpix(x+(i*scale),y+(j*scale),this.val[i][j],scale,graph);
+        }
+      }    	 
+    }
+    
+    Map.prototype.set = function(x,y,val) {
+	  this.val[x][y] = val;   
+	}
+
+    Map.prototype.get = function(x,y) {
+	  return this.val[x][y];   
+	}
+    var mapx = 0;
+    var mapy = 0;
+	map = new Map(150);
+	map.init();
+	//map.fillrandom();
+    map.draw(mapx,mapy,3,graphics);
+    
+    
+    var themouse = app.renderer.plugins.interaction.mouse;
+    
+    //Start the game loop 
+    app.ticker.add(delta => gameLoop(delta));
+    
+	function gameLoop(delta){
+	  //Update the current game state:
+	  state(delta);
+	}
+	
+
+	
+	// MainLoop
+	function play(delta) {
+	  x = themouse.global.x; y= themouse.global.y;	
+	  if (themouse.buttons == 1) {
+		  for (i=-2; i<5; i++) {
+			  for (j=-2; j<5; j++) {
+				  val = map.get(x+i,y+j);
+			      newcol = val + (4-Math.abs(j)-Math.abs(i))*0x010101;
+			      map.set(x+i,y+j,newcol);
+			  }
+		 }
+		  //drawpix(x,y,WHITE,3,graphics);
+		  
+          map.draw(mapx,mapy,3,graphics);
+	  }
+	  
+      var mousePosition = app.renderer.plugins.interaction.mouse.global;
+      promptText.text = themouse.buttons;
+		
+      //map.draw(xi,yi,graphics);	
+      //xi = xi + 50;
+      //if (xi > 500) { xi = 0; yi = yi +50;}
+      //if (yi > 500) {yi = 0; map.initcolor = map.initcolor - 64; map.init()}   
+      //map.initcolor = map.initcolor - 64; map.init()
+	}
+    
+	function win(delta) {
+		
+	}
+
+	function lose(delta) {
+		
+	}
+
+	function pixel() {
+	this.x = 0;
+	this.y = 0;
+	this.val = 0xFFFFFF;	
+	}
+	
+	pixel.prototype.set = function(x,y) {
+	  this.x = x;
+	  this.y = y;
+	}
+
+    function drawpix(x,y,color,scale,graph) {
+	  graph.beginFill(color, 1);
+	  graph.drawRect(x-(scale/2),y-(scale/2),scale,scale);
+    }
+  </script>
+</body>
+</html>
