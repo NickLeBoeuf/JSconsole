@@ -1,1 +1,1 @@
-# JSconsole
+# JSconsole - Main development
