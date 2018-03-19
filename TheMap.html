@@ -79,7 +79,7 @@
 	  this.height = size;
 	  this.assignedgraphics = undefined;
 	  this.assignedscale = 3;
-	  this.initcolor = 0x555555;
+	  this.initcolor = 128;
 	  this.val = new Array(this.width); 
       for (var i = 0; i < this.width; i++) {
         this.val[i] = new Array(this.height);
@@ -89,7 +89,7 @@
     Map.prototype.init = function() {
 	  for (i=0; i<this.width; i++) {
 	    for (j=0; j<this.height; j++) {
-		  this.val[i][j] = this.initcolor;
+		  this.set(i,j,this.initcolor);
         }
       }    	    
 	}
@@ -98,17 +98,19 @@
 	  for (i=0; i<this.width; i++) {
 	    for (j=0; j<this.height; j++) {
 		  var randval = Math.floor((Math.random()*255));
-		  var greycol = randval  + randval*256 + randval * 65536;
-		  this.val[i][j] = greycol;
+		  var greycol = randval  ; //+ randval*256 + randval * 65536;
+		  this.set(i,j,greycol);
         }
       }    	    
 	}	
+
 	Map.prototype.draw = function(x,y) {
 	  scale = this.assignedscale;
 	  graph = this.assignedgraphics;
 	  for (i=0; i<this.width; i++) {
 	    for (j=0; j<this.height; j++) {
-		  drawpix(x+(i*scale),y+(j*scale),this.get(i,j),scale,graph);
+	      value = this.get(i,j);
+		  drawpix(x+(i*scale),y+(j*scale),value+value*0x000100+value*0x010000,scale,graph);
         }
       }    	 
     }
@@ -121,14 +123,24 @@
 	  return this.val[x][y];   
 	}
 	
-	// Bad function - Trash it
+	// Looks better finally
     Map.prototype.changeh = function(x,y,offset) {
-	    var radius = Math.abs(this.get(x,y) - offset);
+	    var radius = Math.abs(offset); // Math.abs(this.get(x,y) - offset);
 	    for (i=(-radius); i<(radius+1); i++) {
 		    for (j=(-radius); j<(radius+1); j++) {
-		        dist = Math.sqrt((x+i)*(x+i)+(y+j)*(y+j));
-		        variation = (offset/dist>>0); // This gives the integer part of the division
-		        this.val[x+i][y+i]=+variation;
+		        dist = Math.sqrt(i*i+j*j);
+		        if (dist==0) {variation = offset;} else {
+					variation = (offset/dist>>0);} // This gives the integer part of the division
+		        oldval = this.get(x+i,y+j);
+		        newval = oldval+variation;
+		        if (newval>255) {newval=255;}
+		        if (newval<0) {newval =0;}
+		        if (newval != oldval) {
+					this.set(x+i,y+j,newval);
+		            this.drawpoint(x+i,y+j);
+				}
+				
+	            //this.set(x+i,y+j,this.get(x+i,y+j)+offset);
 	        }
         }
     }
@@ -136,19 +148,22 @@
     Map.prototype.drawpoint = function(x,y) {
       scale = this.assignedscale;
 	  graph = this.assignedgraphics;
-	  drawpix(x+(i*scale),y+(j*scale),this.get(i,j),scale,graph);
+	  value = this.get(x,y);
+	  drawpix(x*scale,y*scale, value+value*0x000100+value*0x010000,scale,graph);
     }
     
     
-    // Recursive function to change height
+    // Recursive function to change height // Bad idea :(
     Map.prototype.changeh2 = function(x,y,offset) {
 
 	   // here we have to put a STOP condition to the recursivity calls when offset is under 1
-       if (offset == 0) { return "ZERO";}
+       if (offset < 1) { return "ZERO";}
        if (offset == 1) {
-		 this.set(x,y, this.get(x,y) + 0x44);// Change the value of the map
+		 this.set(x,y, this.get(x,y) + 0x111100);// Change the value of the map
+		 this.drawpoint(x,y);
 		 return "ONE";  
 	   } else {
+		   offset = Math.trunc(offset);
 		   nextoff = offset - 1;
 		   diagoff = nextoff * 0.7;
 	       
@@ -157,7 +172,8 @@
 	       this.changeh2(x+1,y-1,diagoff);
 	       
 	       this.changeh2(x-1,y,nextoff);
-	       this.set(x  ,y,this.get(x,y) + offset); // Change the value of the map
+	       this.set(x  ,y,this.get(x,y) + offset*0x111100); // Change the value of the map
+	       this.drawpoint(x,y);
 	       this.changeh2(x+1,y,nextoff);
 	       
 	       this.changeh2(x-1,y+1,diagoff);
@@ -201,11 +217,12 @@
 			  //}
 		 //}
 		  //drawpix(x,y,WHITE,3,graphics);
-		  //map.changeh2(x,y,1);
+		  //map.changeh2(x,y,20);
+		  map.changeh(x,y,40);
 		  
-		  map.set(x,y,map.get(x,y)+0x111100);
+		  //map.set(x,y,map.get(x,y)+0x111100);
 		  //map.drawpoint(x,y);
-          map.draw(mapx,mapy);        
+          //map.draw(mapx,mapy);        
 	  }
 	  
       var mousePosition = app.renderer.plugins.interaction.mouse.global;
