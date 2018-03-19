@@ -1,1 +1,2 @@
-# JSconsole
+# JSconsole - TheMap development
+
