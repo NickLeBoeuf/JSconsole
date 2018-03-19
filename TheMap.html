@@ -204,6 +204,15 @@
     map.draw(mapx,mapy,3,graphics);
     
     
+    // Mouse
+    document.addEventListener("click", mouseclick);
+    document.addEventListener("mouseup", mouseup);
+    document.addEventListener("mousedown", mousedown);
+    function mouseclick() {console.log("Click");}
+    function mouseup() {console.log("up");}
+    function mousedown() {console.log("down");}
+    
+    
     var themouse = app.renderer.plugins.interaction.mouse;
     
     //Start the game loop 
