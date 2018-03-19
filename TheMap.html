@@ -116,11 +116,15 @@
     }
     
     Map.prototype.set = function(x,y,value) {
-	  this.val[x][y] = value;   
+	  if ((x>=0) && (y>=0) && (x<this.width) && (y<this.height)) {
+    	  this.val[x][y] = value;
+	  }   
 	}
 
     Map.prototype.get = function(x,y) {
-	  return this.val[x][y];   
+	  if ((x>=0) && (y>=0)&& (x<this.width) && (y<this.height)) {
+	    return this.val[x][y];}
+	    else return 0;   
 	}
 	
 	// Looks better finally
@@ -129,8 +133,15 @@
 	    for (i=(-radius); i<(radius+1); i++) {
 		    for (j=(-radius); j<(radius+1); j++) {
 		        dist = Math.sqrt(i*i+j*j);
-		        if (dist==0) {variation = offset;} else {
-					variation = (offset/dist>>0);} // This gives the integer part of the division
+		        
+		        // cubic distribution
+		        //if (dist==0) {variation = offset;} else {
+				//	variation = (offset/dist>>0);} // This gives the integer part of the division
+		        
+		        // linear distribution
+				variation = (offset-dist>>0);
+				if (variation <0) {variation =0;} // This gives the integer part of the division
+		        
 		        oldval = this.get(x+i,y+j);
 		        newval = oldval+variation;
 		        if (newval>255) {newval=255;}
