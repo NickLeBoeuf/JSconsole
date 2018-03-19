@@ -109,13 +109,47 @@
       }    	 
     }
     
-    Map.prototype.set = function(x,y,val) {
-	  this.val[x][y] = val;   
+    Map.prototype.set = function(x,y,value) {
+	  this.val[x][y] = value;   
 	}
 
     Map.prototype.get = function(x,y) {
 	  return this.val[x][y];   
 	}
+	
+    Map.prototype.changeh = function(x,y,offset) {
+	    var radius = Math.abs(this.get(x,y) - offset);
+	    for (i=(-radius); i<(radius+1); i++) {
+		    for (j=(-radius); j<(radius+1); j++) {
+		        dist = Math.sqrt((x+i)*(x+i)+(y+j)*(y+j));
+		        variation = (offset/dist>>0); // This gives the integer part of the division
+		        this.val[x+i][y+i]=+variation;
+	        }
+        }
+    }
+    
+    Map.prototype.changeh2 = function(x,y,offset) {
+
+	   // here we have to put a STOP condition to the recursivity calls when offset is under 1
+
+	   nextoff = offset - 1;
+	   diagoff = nextoff * 0.7;
+       
+       this.changeh2(x-1,y-1,diagoff);
+       this.changeh2(x  ,y-1,nextoff);
+       this.changeh2(x+1,y-1,diagoff;
+       
+       this.changeh2(x-1,y,nextoff);
+       this.changeh2(x  ,y,offset); // This has to be changed with the this.val update
+       this.changeh2(x+1,y,nextoff);
+       
+       this.changeh2(x-1,y+1,diagoff);
+       this.changeh2(x  ,y+1,nextoff);
+       this.changeh2(x-1,y+1,diagoff);  
+	    		        
+    }	
+	
+	
     var mapx = 0;
     var mapy = 0;
 	map = new Map(150);
