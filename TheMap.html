@@ -77,6 +77,8 @@
 	function Map(size) {
 	  this.width = size;
 	  this.height = size;
+	  this.assignedgraphics = undefined;
+	  this.assignedscale = 3;
 	  this.initcolor = 0x555555;
 	  this.val = new Array(this.width); 
       for (var i = 0; i < this.width; i++) {
@@ -101,10 +103,12 @@
         }
       }    	    
 	}	
-	Map.prototype.draw = function(x,y,scale,graph) {
+	Map.prototype.draw = function(x,y) {
+	  scale = this.assignedscale;
+	  graph = this.assignedgraphics;
 	  for (i=0; i<this.width; i++) {
 	    for (j=0; j<this.height; j++) {
-		  drawpix(x+(i*scale),y+(j*scale),this.val[i][j],scale,graph);
+		  drawpix(x+(i*scale),y+(j*scale),this.get(i,j),scale,graph);
         }
       }    	 
     }
@@ -117,6 +121,7 @@
 	  return this.val[x][y];   
 	}
 	
+	// Bad function - Trash it
     Map.prototype.changeh = function(x,y,offset) {
 	    var radius = Math.abs(this.get(x,y) - offset);
 	    for (i=(-radius); i<(radius+1); i++) {
@@ -128,31 +133,45 @@
         }
     }
     
+    Map.prototype.drawpoint = function(x,y) {
+      scale = this.assignedscale;
+	  graph = this.assignedgraphics;
+	  drawpix(x+(i*scale),y+(j*scale),this.get(i,j),scale,graph);
+    }
+    
+    
+    // Recursive function to change height
     Map.prototype.changeh2 = function(x,y,offset) {
 
 	   // here we have to put a STOP condition to the recursivity calls when offset is under 1
-
-	   nextoff = offset - 1;
-	   diagoff = nextoff * 0.7;
-       
-       this.changeh2(x-1,y-1,diagoff);
-       this.changeh2(x  ,y-1,nextoff);
-       this.changeh2(x+1,y-1,diagoff;
-       
-       this.changeh2(x-1,y,nextoff);
-       this.changeh2(x  ,y,offset); // This has to be changed with the this.val update
-       this.changeh2(x+1,y,nextoff);
-       
-       this.changeh2(x-1,y+1,diagoff);
-       this.changeh2(x  ,y+1,nextoff);
-       this.changeh2(x-1,y+1,diagoff);  
-	    		        
+       if (offset == 0) { return "ZERO";}
+       if (offset == 1) {
+		 this.set(x,y, this.get(x,y) + 0x44);// Change the value of the map
+		 return "ONE";  
+	   } else {
+		   nextoff = offset - 1;
+		   diagoff = nextoff * 0.7;
+	       
+	       this.changeh2(x-1,y-1,diagoff);
+	       this.changeh2(x  ,y-1,nextoff);
+	       this.changeh2(x+1,y-1,diagoff);
+	       
+	       this.changeh2(x-1,y,nextoff);
+	       this.set(x  ,y,this.get(x,y) + offset); // Change the value of the map
+	       this.changeh2(x+1,y,nextoff);
+	       
+	       this.changeh2(x-1,y+1,diagoff);
+	       this.changeh2(x  ,y+1,nextoff);
+	       this.changeh2(x-1,y+1,diagoff);  
+	       }	    		        
     }	
 	
 	
     var mapx = 0;
     var mapy = 0;
 	map = new Map(150);
+	map.assignedgraphics=graphics;
+	map.assignedscale=3;
 	map.init();
 	//map.fillrandom();
     map.draw(mapx,mapy,3,graphics);
@@ -172,18 +191,21 @@
 	
 	// MainLoop
 	function play(delta) {
-	  x = themouse.global.x; y= themouse.global.y;	
+	  x = themouse.global.x/3>>0; y= themouse.global.y/3>>0;	
 	  if (themouse.buttons == 1) {
-		  for (i=-2; i<5; i++) {
-			  for (j=-2; j<5; j++) {
-				  val = map.get(x+i,y+j);
-			      newcol = val + (4-Math.abs(j)-Math.abs(i))*0x010101;
-			      map.set(x+i,y+j,newcol);
-			  }
-		 }
+		  //for (i=-2; i<5; i++) {
+			  //for (j=-2; j<5; j++) {
+				  //val = map.get(x+i,y+j);
+			      //newcol = val + (4-Math.abs(j)-Math.abs(i))*0x010101;
+			      //map.set(x+i,y+j,newcol);
+			  //}
+		 //}
 		  //drawpix(x,y,WHITE,3,graphics);
+		  //map.changeh2(x,y,1);
 		  
-          map.draw(mapx,mapy,3,graphics);
+		  map.set(x,y,map.get(x,y)+0x111100);
+		  //map.drawpoint(x,y);
+          map.draw(mapx,mapy);        
 	  }
 	  
       var mousePosition = app.renderer.plugins.interaction.mouse.global;
