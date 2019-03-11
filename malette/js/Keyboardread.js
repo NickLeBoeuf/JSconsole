@@ -17,6 +17,7 @@
 	  //The `downHandler`
 	  key.downHandler = event => {
 		key.code = event.keyCode;
+		if (key.code==122) return false;
         if ( ((key.code > 64) && (key.code < 91))
            ||((key.code > 47) && (key.code < 58))
            ||((key.code > 37) && (key.code < 41))

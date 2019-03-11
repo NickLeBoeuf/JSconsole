@@ -3,6 +3,10 @@
 
     const MAXTIMER = 35000;    
 
+
+    const DEBUGPASSWD="NICK";
+    
+    
 	// Game texts
 	const TEXT_LEVEL0 =    "-= Security level 0 =-";
 	const TEXT_LEVEL1 =    "-= Security level 1 =-";
@@ -12,8 +16,8 @@
 	const TEXT_LEVEL5 =    "-= Security level 5 =-";
 	const TEXT_LEVEL6 =    "-= Security level 6 =-";
 	const TEXT_LEVEL7 =    "-= Security level 7 =-";
-	const TEXT_PROMPT =    "## Enter password to raise Security Level\n";
-    const TEXT_UNKNOWN =   "## Unknown password / command ";
+	const TEXT_PROMPT =    "Tapez un code ou une commande.\n";
+    const TEXT_UNKNOWN =   "Code ou Commande inconnu ";
 	const TEXT_TIMERSTART= "## Starting Timer";
 	const TEXT_TIMERSTOP=  "## Timer Stopped";
 	const TEXT_TIMERRESET= "## Timer has been reset";

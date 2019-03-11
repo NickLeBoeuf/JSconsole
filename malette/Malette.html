@@ -6,9 +6,13 @@
 </head>
   <script src="../pixi/pixi.min.js"></script>
   <script src="../pixi/pixi-sound.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="js/constants.js"></script>
   <script src="js/Timer.js"></script>
   <script src="js/Keyboardread.js"></script>
+  <script src="js/PAnalyze.js"></script>
+  <script src="js/Styles.js"></script>
+  <script src="js/GameStates.js"></script>
 <body>
   <body bgcolor="#000000">
 
@@ -21,7 +25,7 @@
 
 
     function gameprogress() {
-	  this.level = 0;
+	  this.level = -1;
 	}
 	gameprogress.prototype.getstring = function () {
 	  switch (this.level) {
@@ -33,7 +37,7 @@
 		  case 5: return TEXT_LEVEL5;
 		  case 6: return TEXT_LEVEL6;
 		  case 7: return TEXT_LEVEL7;
-		  default : return TEXT_LEVEL7;
+		  default : return ;
 		}
 	}
 	
@@ -47,92 +51,6 @@
 	
 
 
-    const DEBUGPASSWD="NICK";
-    function PAnalyze() {
-	  this.lastcommand = "";
-	}
-	
-    PAnalyze.prototype.command = function(inputwithcursor) {
-      var input = inputwithcursor.slice(2, inputwithcursor.length-1)
-      consoleText.text = TEXT_PROMPT + "## "+input+"\n";
-      this.lastcommand = input;
-	  // Password and level evaluation section
-	  //debugText.text = " >> ";
-	  for (var [passwd, found] of riddles) {
-	    //debugText.text += passwd;
-	    if ((input == passwd) && (found == 0)) {
-		  riddles.set(passwd, 1);
-		  securitylevel.level++;
-          consoleText.text += TEXT_PASSWDCORRECT;
-          pagersound.play();
-		  return;
-		}
-	  }
-	  // Debug mode entry control
-      if ((debugrequest == 1) && (input == DEBUGPASSWD)) {
-		consoleText.text = TEXT_DEBUGENTRY;
-		debugmode = 1; debugrequest == 0; this.lastcommand ="";
-	  }
-
-	  // Analyze Commands
-	  else {
-	      if (debugmode == 1) { // Commands in Debug mode
-			  debugrequest = 0;
-		      switch (input) {
-				case "TIMER START":
-				  timer.start();
-				  consoleText.text += TEXT_TIMERSTART;
-				  break;
-				case "TIMER STOP":
-				  timer.stop();
-				  consoleText.text += TEXT_TIMERSTOP;
-				  break;
-				case "TIMER RESET":
-				  timer.init(MAXTIMER);
-				  consoleText.text += TEXT_TIMERRESET;
-				  break;
-				case "DEBUG OFF":
-				  consoleText.text += TEXT_USERMODE;
-				  debugmode = 0;
-				  break;	    
-				default:
-				  consoleText.text += TEXT_UNKNOWN;
-				  syntaxerrorsound.play();
-			  }
-			}
-		  else {              // Commands in user mode	  
-		      switch (input) {
-				// Debug mode control
-				case "DEBUG":
-				  consoleText.text += TEXT_DEBUGREQ;
-				  debugrequest = 1;
-				  break;
-				// User commands
-				case "TIMER START":
-				  timer.start();
-				  consoleText.text += TEXT_TIMERSTART;
-				  break;
-				case "TIMER RESET":
-				  if (timer.timeout == 1) {  // Warning : #@ timer can be reset in user mode if timeout has been reached
-					timer.init(MAXTIMER);
-					consoleText.text += TEXT_TIMERRESET;
-				  } else {
-					consoleText.text += TEXT_TIMERCANTRESET 
-			      }
-				  break;
-				case "":
-		          debugrequest = 0;
-				  break;
-				default:
-				  debugrequest = 0;
-				  consoleText.text += TEXT_UNKNOWN;
-				  syntaxerrorsound.play();
-			  }
-		  }
-	  }
-	}
-    PAnalyze.prototype.get = function () {  } 	
-      	
       	
     // Game riddles
     const MAXLEVEL = 2; // This indicates how many riddles must be solved to win
@@ -152,12 +70,12 @@
     keyreader.press = () => {
       if (keyreader.code == KRETURN) {
 	 	//PAnalyze(promptText.text);
-	 	console.command(promptText.text);
+	 	consolePrompt.command(promptText.text);
         promptText.text = PS1+CCURSOR;
 	    returnsound.play();
   	  }
   	  else if (keyreader.code == KUPARROW) {
-		promptText.text = PS1+console.lastcommand+CCURSOR;
+		promptText.text = PS1+consolePrompt.lastcommand+CCURSOR;
 	  }
 	  else if (keyreader.code == KDOWNARROW) {
 		promptText.text = PS1+CCURSOR;
@@ -180,81 +98,11 @@
 	var app = new PIXI.Application(800,600,{backgroundColor: 0x0} );
 	document.body.appendChild(app.view);
 	
-	// The console main style
-	var style = new PIXI.TextStyle({
-	    fontFamily: 'asimov',
-	    fontSize: 20,
-	    fontStyle: 'normal',
-	    fontWeight: 'bold',
-//	    fill: ['#7a9b30', '#5a7b10'], // gradient
-	    fill: ['#7f5c28', '#5f3c08'], // gradient
-	    stroke: '#4a1850',
-	    strokeThickness: 0,
-	    dropShadow: false,
-	    dropShadowColor: '#000000',
-	    dropShadowBlur: 0,
-	    dropShadowAngle: 1,
-	    dropShadowDistance: 6,
-	    wordWrap: true,
-	    wordWrapWidth: 740
-	});
-	var timerstyle = new PIXI.TextStyle({
-	    fontFamily: 'asimov',
-	    fontSize: 20,
-	    fontStyle: 'normal',
-	    fontWeight: 'bold',
-	    fill: ['#ff0000', '#aa0000'], // gradient
-	    strokeThickness: 0,
-	    dropShadow: false,
-	    wordWrap: true,
-	    wordWrapWidth: 200
-	});	
-	var debugstyle = new PIXI.TextStyle({
-	    fontFamily: 'asimov',
-	    fontSize: 20,
-	    fontStyle: 'normal',
-	    fontWeight: 'bold',
-	    fill: ['#00ffff', '#00aaaa'], // gradient
-	    strokeThickness: 0,
-	    dropShadow: false,
-	    wordWrap: true,
-	    wordWrapWidth: 200
-	});	
-	var infostyle = new PIXI.TextStyle({
-	    fontFamily: 'asimov',
-	    fontSize: 30,
-	    fontStyle: 'normal',
-	    fontWeight: 'bold',
-	    fill: ['#7f5c28', '#9f7c48'], // gradient
-	    strokeThickness: 0,
-	    dropShadow: false,
-	    wordWrap: true,
-	    wordWrapWidth: 540
-	});	
-	// Console input line
-	const PS1 = "> ";
-	var promptText = new PIXI.Text(PS1+CCURSOR, style);
-	promptText.x = 30;
-	promptText.y = 400;
-	// Console output line
-	var consoleText = new PIXI.Text(TEXT_PROMPT, style);
-	consoleText.x = 30;
-	consoleText.y = 300;	
-	// Upper Right field for clock and coutdown
-	var timerText = new PIXI.Text('[  ]', timerstyle);
-	timerText.x = 650;
-	timerText.y = 40 ;
-    // Upper left field for Debug Mode
-    var debugText = new PIXI.Text('ZombiCorp 4.2', style);
-    debugText.x = 20;
-    debugText.y = 10;
-    // Middle field for Security Level indicator
-    var securitylevelText = new PIXI.Text(TEXT_LEVEL0, infostyle);
-    securitylevelText.x = 130;
-    securitylevelText.y = 150;
+
+
 	
 	var timer = new Timer();
-	var console = new PAnalyze();
+	var consolePrompt = new PAnalyze();
     var debugmode = 0 ; 
     var debugrequest = 0;
     var securitylevel = new gameprogress();
@@ -264,7 +112,7 @@
     const img1 = [imgfolder+'black.jpg',0.5,0.5];
     const img2 = [imgfolder+'blackglass.png',0.45,0.5];
     const img3 = [imgfolder+'Layer1.png',0.5,0.5];
-    const img4 = [imgfolder+'white.jpg',0.6,0.8];
+    const img4 = [imgfolder+'white.jpg',0.65,0.8];
     const img5 = [imgfolder+'white2.jpg',0.5,0.5];
     
     let backgroundimg = new PIXI.Sprite.fromImage(img4[0]);    
@@ -290,8 +138,8 @@
 	// init timer with saved values if they exist
 	timer.restore();   
 
-    //Set the game state
-    state = play;
+    //Set the game state (play, win, lose)
+    if (timer.isrunning == 0) {state = intro;} else {state = play;}
  
     //Start the game loop 
     app.ticker.add(delta => gameLoop(delta));
@@ -301,127 +149,6 @@
 	  state(delta);
 	}
 	
-	// MainLoop
-	function play(delta) {
-		
-	  var time = new Date();
-	  //timerText.text = "       TIME: " + heure() + " \n" + "COUNTDOWN: "+timer.get();
-	  if (timer.phase < 6) { timerText.text = timer.get(); }
-	  else timerText.text = timer.get();
-	  
-	  if (securitylevel.level == MAXLEVEL) {
-		  state = win;
-		  pagersound.stop();
-		  opendoorsound.play();
-	  };
-	  
-	  // debug ease: loop timer #@
-	  //if (timer.timeout == 1) {timer.init(MAXTIMER);timer.start();}
-	  if (timer.timeout == 1) {state = lose;}
-	  
-	  // Display countdown
-	    timerText.x = 680;
-	    timerText.y = 40 ;
-	    //timerText.width = 720;
-        //timerText.height = 520;
-        //timerText.anchor.set(0.5,0.5);
-        //timerText.rotation = timerText.rotation + 0.015; 
-        ///timer.phase = 5;
-        
-        timerText.x = 650;
-	    timerText.y = 20;
-	    timerText.scale.set(1,1);
-	    //timerText.width = undefined;
-        //timerText.height = undefined;             
-        timerstyle.fill = ['#578f38', '#376f18'];
-        switch (timer.phase) {
-		case 0: {timerstyle.fontWeight = 'normal'; timerstyle.fontSize = 24; break}
-	    case 1: {timerstyle.fontWeight = 'bold';  timerstyle.fontSize = 24; break}
-	    case 2: {timerstyle.fontSize = 28; break}
-	    case 3: {timerstyle.fontSize = 32; break}
-	    case 4: {timerstyle.fontSize = 40;
-			     timerText.x = 650;
-	             timerText.y = 20;
-	             timerText.width = 100;
-                 timerText.height = 50;             
-           	     timerstyle.fill = ['#578f38', '#376f18'];
-           	     break}
-	    case 5: {timerstyle.fontSize = 50;
-			     timerText.x = 580;
-	             timerText.y = 20;
-	             timerText.width = 150;
-                 timerText.height = 75;             
-           	     timerstyle.fill = ['#e0c010', '#908005'];
-           	     break}
-	    case 6: {timerstyle.fontSize = 60;
-			     timerText.x = 480;
-	             timerText.y = 20;
-	             timerText.width = 300;
-                 timerText.height = 200;             
-           	     timerstyle.fill = ['#e03000', '#902000'];
-
-	             break;}
-	    case 7: {timerstyle.fontSize = 60;
-			     timerText.x = 40;
-	             timerText.y = 20;
-	             timerText.width = 720;
-                 timerText.height = 520;
-           	     timerstyle.fill = ['#e03000', '#902000'];             
-	             break;}
-	    default: timerstyle.fontSize = 20; 
-	    }
-	
-	
-	    //fontSize: 20,
-	    //fontStyle: 'normal',
-	    //fontWeight: 'bold',
-	    //fill: ['#ff0000', '#aa0000'], // gradient
-	    //strokeThickness: 0,
-	    //dropShadow: false,
-	    //wordWrap: true,
-	    //wordWrapWidth: 200
-	  
-	  if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
-	  //securitylevelText.width += 1;
-	  if (debugmode == 1) {
-		  style.fill = ['#ffff00', '#aaaa00'];
-		  timerText.text += "\nKEY CODE: "+keyreader.code;
-	  }
-		  //else //style.fill = ['#00ff00', '#00aa00'];
-	}
-    
-	function win(delta) {
-		//app.stage.removeChild(timerText);
-		app.stage.removeChild(promptText);
-		//app.stage.removeChild(consoleText);
-		//app.stage.addChild(debugText);
-		//app.stage.addChild(securitylevelText);
-	    //app.stage.addChild(backgroundimg);
-        
-	    timer.stop();
-	    consoleText.text = "Countdown stopped. Opening Doors to upper level.\n";
-	    securitylevelText.text = "WELL\nDONE";
-	    securitylevelText.anchor.set(0.5,0.5);
-	    securitylevelText.setTransform(300,150,3,3,securitylevelText.rotation);
-	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
-	    infostyle.fill = ['#ffff00', '#aaaa00']; 
-	}
-
-	function lose(delta) {
-		app.stage.removeChild(timerText);
-		app.stage.removeChild(promptText);
-		
-	    consoleText.text = "Time Out. Opening External Doors. You're trapped with Zombies ! \n";
-	    securitylevelText.text = "YOU\nARE\nDEAD";
-	    securitylevelText.anchor.set(0.5,0.5);
-	    securitylevelText.setTransform(300,150,3,3,securitylevelText.rotation);
-	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
-	    infostyle.fill = ['#ff0000', '#aa0000']; 	
-	    
-	    // When dead, simply type blindly TIMER RESET and reload the page
-	    //if (timer.timeout == 0) {state = play;}    
-	}
-
 
   </script>
 </body>
