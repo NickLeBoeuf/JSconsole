@@ -8,6 +8,7 @@
   <script src="../pixi/pixi-sound.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="js/constants.js"></script>
+  <script src="js/imgsnd.js"></script>
   <script src="js/Timer.js"></script>
   <script src="js/Keyboardread.js"></script>
   <script src="js/PAnalyze.js"></script>
@@ -65,32 +66,32 @@
     riddles.set("XXX=30",0);        	
 	
 
-    // KEYBOARD READER /////////////////////////////////////////////////
-    let keyreader = Keyboardread();
-    keyreader.press = () => {
-      if (keyreader.code == KRETURN) {
-	 	//PAnalyze(promptText.text);
-	 	consolePrompt.command(promptText.text);
-        promptText.text = PS1+CCURSOR;
-	    returnsound.play();
-  	  }
-  	  else if (keyreader.code == KUPARROW) {
-		promptText.text = PS1+consolePrompt.lastcommand+CCURSOR;
-	  }
-	  else if (keyreader.code == KDOWNARROW) {
-		promptText.text = PS1+CCURSOR;
-	  }
-	  else if (keyreader.code != KBACKSPACE) {
-		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
-		clicksound.play();
-      }
-	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
-	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
-	    backspacesound.play();
-	  }
-	  else {
-      }
-	}
+    //// KEYBOARD READER /////////////////////////////////////////////////
+    //let keyreader = Keyboardread();
+    //keyreader.press = () => {
+      //if (keyreader.code == KRETURN) {
+	 	////PAnalyze(promptText.text);
+	 	//consolePrompt.command(promptText.text);
+        //promptText.text = PS1+CCURSOR;
+	    //returnsound.play();
+  	  //}
+  	  //else if (keyreader.code == KUPARROW) {
+		//promptText.text = PS1+consolePrompt.lastcommand+CCURSOR;
+	  //}
+	  //else if (keyreader.code == KDOWNARROW) {
+		//promptText.text = PS1+CCURSOR;
+	  //}
+	  //else if (keyreader.code != KBACKSPACE) {
+		//promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+		//clicksound.play();
+      //}
+	  //else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
+	    //promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
+	    //backspacesound.play();
+	  //}
+	  //else {
+      //}
+	//}
 
       	
 	let state;
@@ -108,13 +109,6 @@
     var securitylevel = new gameprogress();
 
     
-    const imgfolder = ['img/'];
-    const img1 = [imgfolder+'black.jpg',0.5,0.5];
-    const img2 = [imgfolder+'blackglass.png',0.45,0.5];
-    const img3 = [imgfolder+'Layer1.png',0.5,0.5];
-    const img4 = [imgfolder+'white.jpg',0.65,0.8];
-    const img5 = [imgfolder+'white2.jpg',0.5,0.5];
-    
     let backgroundimg = new PIXI.Sprite.fromImage(img4[0]);    
     backgroundimg.setTransform(-20,-30,img4[1],img4[2]);
    
@@ -126,15 +120,8 @@
 	app.stage.addChild(consoleText);
 	app.stage.addChild(debugText);
 	app.stage.addChild(securitylevelText);
-	
-	const sndfolder = ['sound/'];
-	pagersound = new PIXI.sound.Sound.from({url: sndfolder+'pager2.wav'});
-	clicksound = new PIXI.sound.Sound.from({url: sndfolder+'click.wav'});
-	returnsound = new PIXI.sound.Sound.from({url: sndfolder+'return.wav'});
-	backspacesound = new PIXI.sound.Sound.from({url: sndfolder+'/backspace.wav'});
-	syntaxerrorsound = new PIXI.sound.Sound.from({url: sndfolder+'syntaxerror.wav'});
-	opendoorsound = new PIXI.sound.Sound.from({url: sndfolder+'opendoor.mp3'});
 
+    PIXI.sound.stopAll;
 	// init timer with saved values if they exist
 	timer.restore();   
 

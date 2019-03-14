@@ -78,6 +78,21 @@
 				  break;
 				case "READY":
 				  securitylevel.level++;
+				  break;
+                // Riddle Quizz musical
+				case "ECOUTE 1":
+				  PIXI.sound.stopAll();jackson5sound.play();
+				  break;
+				case "ECOUTE 10":
+				  PIXI.sound.stopAll;u2sound.play();
+				  break;
+				case "ECOUTE 100":
+				  whitestripessound.play();
+				  break;
+				case "ECOUTE 1000":
+				  vivaldisound.play();
+				  break;
+				  
 				case "":
 		          debugrequest = 0;
 				  break;

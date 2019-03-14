@@ -149,7 +149,7 @@
 		  pagersound.stop();
 		  opendoorsound.play();
 		  consoleText.y = 300;
-		  consoleText.text = "Démarrage du Compte a Rebours...\n";
+		  consoleText.text = "Démarrage du Compte à Rebours...\n";
 		  app.stage.addChild(timerText);
 		  securitylevelText.anchor.set(0,0);
 		  securitylevelText.setTransform(130,150,1,1,0);

@@ -42,3 +42,29 @@
 	  return key;
 	}
 
+    // KEYBOARD READER /////////////////////////////////////////////////
+    let keyreader = Keyboardread();
+    keyreader.press = () => {
+      if (keyreader.code == KRETURN) {
+	 	//PAnalyze(promptText.text);
+	 	consolePrompt.command(promptText.text);
+        promptText.text = PS1+CCURSOR;
+	    returnsound.play();
+  	  }
+  	  else if (keyreader.code == KUPARROW) {
+		promptText.text = PS1+consolePrompt.lastcommand+CCURSOR;
+	  }
+	  else if (keyreader.code == KDOWNARROW) {
+		promptText.text = PS1+CCURSOR;
+	  }
+	  else if (keyreader.code != KBACKSPACE) {
+		promptText.text = promptText.text.slice(0, promptText.text.length-1) + String.fromCharCode(keyreader.code)+CCURSOR;
+		clicksound.play();
+      }
+	  else if ((keyreader.code == KBACKSPACE) && (promptText.text.length > 3)) {
+	    promptText.text = promptText.text.slice(0, promptText.text.length-2) + CCURSOR;
+	    backspacesound.play();
+	  }
+	  else {
+      }
+	}
