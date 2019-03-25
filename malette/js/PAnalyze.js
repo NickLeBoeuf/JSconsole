@@ -20,6 +20,7 @@
 		  riddles.set(passwd, 1);
 		  securitylevel.level++;
           consoleText.text += TEXT_PASSWDCORRECT;
+		  pagersound.loop = false;
           pagersound.play();
 		  return;
 		}
@@ -80,6 +81,14 @@
 				  securitylevel.level++;
 				  PIXI.sound.filtersAll = [];
 				  break;
+				case "PANIC":
+				  panicmode = 1;
+				  pagersound.loop = true;
+				  pagersound.play();
+				  break;
+				case "PANIC2":
+				  panicmode = 2;
+				  break;				  
                 // Riddle Quizz musical = 4715
 				case "ECOUTE 1":
 				  jackson5sound.play();

@@ -79,10 +79,12 @@
     var debugmode = 0 ; 
     var debugrequest = 0;
     var securitylevel = new gameprogress();
-
-    
+    var tiltdirection = -1;
+    var panicmode = 0;
+     
     let backgroundimg = new PIXI.Sprite.fromImage(img4[0]);    
     backgroundimg.setTransform(-20,-30,img4[1],img4[2]);
+    backgroundimg.tint = "0xFFFFFF";
    
     // Add elements to canvas
 

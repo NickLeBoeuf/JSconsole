@@ -19,19 +19,10 @@
 	  if (timer.timeout == 1) {state = lose;}
 	  
 	  // Display countdown
-	    timerText.x = 680;
-	    timerText.y = 40 ;
-	    //timerText.width = 720;
-        //timerText.height = 520;
-        //timerText.anchor.set(0.5,0.5);
-        //timerText.rotation = timerText.rotation + 0.015; 
-        ///timer.phase = 5;
         
         timerText.x = 650;
 	    timerText.y = 20;
-	    timerText.scale.set(1,1);
-	    //timerText.width = undefined;
-        //timerText.height = undefined;             
+	    timerText.scale.set(1,1);           
         timerstyle.fill = ['#000000', '#005500']
         switch (timer.phase) {
 		case 0: {timerstyle.fontWeight = 'normal'; timerstyle.fontSize = 24; break}
@@ -70,23 +61,41 @@
 	    default: timerstyle.fontSize = 20; 
 	    }
 	
-	
-	    //fontSize: 20,
-	    //fontStyle: 'normal',
-	    //fontWeight: 'bold',
-	    //fill: ['#ff0000', '#aa0000'], // gradient
-	    //strokeThickness: 0,
-	    //dropShadow: false,
-	    //wordWrap: true,
-	    //wordWrapWidth: 200
 	  
-	  if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
-	  //securitylevelText.width += 1;
+	  //if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
+
+      // Debug mode color change	  
 	  if (debugmode == 1) {
-		  style.fill = ['#ffff00', '#aaaa00'];
+		  style.fill = debugstyle.fill;
 		  timerText.text += "\nKEY CODE: "+keyreader.code;
 	  }
-		  //else //style.fill = ['#00ff00', '#00aa00'];
+		  else 
+		  style.fill = nodebugstylefill;
+
+      // Enter in panic mode
+     
+     
+      if (panicmode == 1) {
+		  var tiltspeed = 0x0404;
+		  if (tiltdirection == -1 ) {
+			  if (backgroundimg.tint > (0xFF0000+tiltspeed)) {
+		          backgroundimg.tint = backgroundimg.tint - tiltspeed;
+	          } else {tiltdirection = 1;}
+		  }
+		  if (tiltdirection == 1 ) {
+          	  if (backgroundimg.tint < 0xFF2020) {
+		          backgroundimg.tint = backgroundimg.tint + tiltspeed;
+		      } else {tiltdirection = -1;}
+	      }
+	      securitylevelText.text = "Panic Mode !\nEntrez vide le code magique\nou sinon..."   
+	  }
+
+      if (panicmode == 2) {
+		  pagersound.stop();
+		  backgroundimg.tint = 0xFFFFFF;
+		  panicmode = 0;
+		  securitylevelText.text = securitylevel.getstring();
+	  }
 	}
     
 	function win(delta) {

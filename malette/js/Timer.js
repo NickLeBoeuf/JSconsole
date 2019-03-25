@@ -49,8 +49,8 @@
       };
     Timer.prototype.get = function () { 
       // Timer phase section
-      //var remainingminutes = this.currentvalue.getMinutes();
-      var remainingminutes = this.currentvalue.getSeconds();
+      var remainingminutes = this.currentvalue.getMinutes();
+      //var remainingminutes = this.currentvalue.getSeconds();
       if      (remainingminutes > TIMERPHASE[0]) {this.phase = 0;} //PHASECOOLEST}
       else if (remainingminutes > TIMERPHASE[1]) {this.phase = 1;} //PHASECOOLER;}
       else if (remainingminutes > TIMERPHASE[2]) {this.phase = 2;} //PHASECOOL;}

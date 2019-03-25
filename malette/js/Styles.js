@@ -19,6 +19,7 @@
 	    wordWrap: true,
 	    wordWrapWidth: 740
 	});
+	var	nodebugstylefill = style.fill;
 	var timerstyle = new PIXI.TextStyle({
 	    fontFamily: 'georgia',
 	    fontSize: 20,
@@ -30,17 +31,17 @@
 	    wordWrap: true,
 	    wordWrapWidth: 200
 	});	
-	var debugstyle = new PIXI.TextStyle({
+  	var debugstyle = new PIXI.TextStyle({
 	    fontFamily: 'georgia',
 	    fontSize: 20,
 	    fontStyle: 'normal',
 	    fontWeight: 'bold',
-	    fill: ['#00ffff', '#00aaaa'], // gradient
+	    fill: ['#000000', '#000099'], // gradient
 	    strokeThickness: 0,
 	    dropShadow: false,
 	    wordWrap: true,
 	    wordWrapWidth: 200
-	});	
+	});	  
 	var infostyle = new PIXI.TextStyle({
 	    fontFamily: 'georgia',
 	    fontSize: 30,
