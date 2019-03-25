@@ -78,13 +78,14 @@
 				  break;
 				case "READY":
 				  securitylevel.level++;
+				  PIXI.sound.filtersAll = [];
 				  break;
-                // Riddle Quizz musical
+                // Riddle Quizz musical = 4715
 				case "ECOUTE 1":
-				  PIXI.sound.stopAll();jackson5sound.play();
+				  jackson5sound.play();
 				  break;
 				case "ECOUTE 10":
-				  PIXI.sound.stopAll;u2sound.play();
+				  u2sound.play();
 				  break;
 				case "ECOUTE 100":
 				  whitestripessound.play();
@@ -92,7 +93,12 @@
 				case "ECOUTE 1000":
 				  vivaldisound.play();
 				  break;
-				  
+				case "STOP":
+				  jackson5sound.stop();
+				  vivaldisound.stop();
+				  u2sound.stop();
+				  whitestripessound.stop();
+				  break;				  
 				case "":
 		          debugrequest = 0;
 				  break;

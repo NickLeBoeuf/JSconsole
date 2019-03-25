@@ -1,7 +1,7 @@
 
 "use strict";
 
-    const MAXTIMER = 35000;    
+    const MAXTIMER = 35 *60* 1000;    
 
 
     const DEBUGPASSWD="NICK";

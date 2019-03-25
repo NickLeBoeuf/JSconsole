@@ -15,11 +15,11 @@
 	let returnsound = new PIXI.sound.Sound.from({url: sndfolder+'return.wav'});
 	let backspacesound = new PIXI.sound.Sound.from({url: sndfolder+'/backspace.wav'});
 	let syntaxerrorsound = new PIXI.sound.Sound.from({url: sndfolder+'syntaxerror.wav'});
-	let opendoorsound = new PIXI.sound.Sound.from({url: sndfolder+'opendoor.mp3'});
-	let jackson5sound = new PIXI.sound.Sound.from({url: sndfolder+'iwantyouback.wav'});
-	let vivaldisound = new PIXI.sound.Sound.from({url: sndfolder+'vivaldi.wav'});
-	let u2sound = new PIXI.sound.Sound.from({url: sndfolder+'u2.wav'});
-	let whitestripessound = new PIXI.sound.Sound.from({url: sndfolder+'thewhitestripes.wav'});
+	let opendoorsound = new PIXI.sound.Sound.from({url: sndfolder+'opendoor.mp3', singleInstance: true});
+	let jackson5sound = new PIXI.sound.Sound.from({url: sndfolder+'iwantyouback.wav', singleInstance: true});
+	let vivaldisound = new PIXI.sound.Sound.from({url: sndfolder+'vivaldi.wav', singleInstance: true});
+	let u2sound = new PIXI.sound.Sound.from({url: sndfolder+'u2.wav', singleInstance: true});
+	let whitestripessound = new PIXI.sound.Sound.from({url: sndfolder+'thewhitestripes.wav', singleInstance: true});
 
      // Put a phone filter to make it more realistic
     u2sound.filters = [new PIXI.sound.filters.TelephoneFilter()];
