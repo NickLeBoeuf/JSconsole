@@ -80,14 +80,16 @@
 				case "READY":
 				  securitylevel.level++;
 				  PIXI.sound.filtersAll = [];
+				  timer.start();
 				  break;
 				case "PANIC":
 				  panicmode = 1;
 				  pagersound.loop = true;
 				  pagersound.play();
+				  timer.doublespeedinit();
 				  break;
 				case "PANIC2":
-				  panicmode = 2;
+				  panicmode = 2;timer.doublespeedstop();
 				  break;				  
                 // Riddle Quizz musical = 4715
 				case "ECOUTE 1":

@@ -29,6 +29,8 @@
 	  this.starttime = undefined;
 	  this.timeout = 0;
 	  this.phase = undefined;
+	  this.doublespeed = 0;
+	  this.secondvalue = 0;
 	}
     Timer.prototype.restore = function () {
       this.currentvalue   = new Date(localStorage.getItem('timercurrentvalue'));
@@ -66,6 +68,18 @@
       var currenttime = new Date();
 	  var timeelapsed = new Date(currenttime - this.starttime);
 	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
+      // double speed if required
+      if (this.doublespeed == 1 ) {
+		if (this.currentvalue.getSeconds() != this.secondvalue) {
+			this.starttime.setTime(this.starttime.getTime() - 1000); // speed up timer
+			// Recalculate currentvalue with updated starttime
+			timeelapsed = new Date(currenttime - this.starttime);
+	        this.currentvalue = new Date(this.laststartvalue - timeelapsed);
+			this.secondvalue = this.currentvalue.getSeconds();
+			localStorage.setItem('timerstarttime', this.starttime);   
+	    }
+	  }
+      // end of double speed section
 	  localStorage.setItem('timercurrentvalue', this.currentvalue);
 	  if (this.currentvalue.valueOf() < 999) {this.timeout=1; this.isrunning =1}
 	  return ("0"+this.currentvalue.getMinutes()).slice(-2) + " " + ("0"+ this.currentvalue.getSeconds()).slice(-2);
@@ -83,4 +97,15 @@
 	  this.laststartvalue = this.currentvalue;
 	  localStorage.setItem('timerrunning', this.isrunning);
       localStorage.setItem('timerlaststartvalue', this.laststartvalue);
-	}      	
+	}
+	
+	Timer.prototype.doublespeedinit = function() {
+	   this.secondvalue = this.currentvalue.getSeconds();
+	   this.doublespeed = 1;
+	}    
+	
+    Timer.prototype.doublespeedstop = function() {
+	   this.doublespeed = 0;
+	}   	
+
+

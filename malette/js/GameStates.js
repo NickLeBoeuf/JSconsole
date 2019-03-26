@@ -20,10 +20,11 @@
 	  
 	  // Display countdown
         
-        timerText.x = 650;
-	    timerText.y = 20;
-	    timerText.scale.set(1,1);           
+                
         timerstyle.fill = ['#000000', '#005500']
+        if (panicmode == 0) {
+			timerText.x = 650;
+			timerText.y = 20
         switch (timer.phase) {
 		case 0: {timerstyle.fontWeight = 'normal'; timerstyle.fontSize = 24; break}
 	    case 1: {timerstyle.fontWeight = 'bold';  timerstyle.fontSize = 24; break}
@@ -58,9 +59,11 @@
                  timerText.height = 520;
            	     timerstyle.fill = ['#e03000', '#902000'];             
 	             break;}
-	    default: timerstyle.fontSize = 20; 
+	    default: {timerstyle.fontSize = 20;
+			      timerText.x = 650;
+	              timerText.y = 20;} 
 	    }
-	
+	    }
 	  
 	  //if ((time % 2000) > 1800) {securitylevelText.text = "";} else {securitylevelText.text=securitylevel.getstring();}
 
@@ -77,14 +80,19 @@
      
       if (panicmode == 1) {
 		  var tiltspeed = 0x0404;
+		  var scaletextspeed = 0.02;
 		  if (tiltdirection == -1 ) {
 			  if (backgroundimg.tint > (0xFF0000+tiltspeed)) {
 		          backgroundimg.tint = backgroundimg.tint - tiltspeed;
+		          timerText.scale.set(timerText.scale.x+scaletextspeed,timerText.scale.y+scaletextspeed);
+		          timerText.x = timerText.x - scaletextspeed*50;
 	          } else {tiltdirection = 1;}
 		  }
 		  if (tiltdirection == 1 ) {
           	  if (backgroundimg.tint < 0xFF2020) {
 		          backgroundimg.tint = backgroundimg.tint + tiltspeed;
+		          timerText.scale.set(timerText.scale.x-scaletextspeed,timerText.scale.y-scaletextspeed);
+		          timerText.x = timerText.x + scaletextspeed*50;
 		      } else {tiltdirection = -1;}
 	      }
 	      securitylevelText.text = "Panic Mode !\nEntrez vide le code magique\nou sinon..."   
@@ -95,6 +103,7 @@
 		  backgroundimg.tint = 0xFFFFFF;
 		  panicmode = 0;
 		  securitylevelText.text = securitylevel.getstring();
+		  timerText.scale.set(1,1);
 	  }
 	}
     
