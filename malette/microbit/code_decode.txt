@@ -1,0 +1,71 @@
+from microbit import *
+
+def showpix(val,intensity):
+    y = 0
+    if (val > 4):
+      y = 1
+      val = val - 5
+    display.set_pixel(val,y,intensity)
+    return
+
+answer = ""
+solution = "9955959995"
+count = 10
+inc = -1
+button = 0;
+
+
+display.show(Image.TARGET)
+sleep(2000)
+display.clear()
+
+while (count > 0):
+    while (button ==0 ):
+      if (button_a.is_pressed()):
+        button = 9
+      if (button_b.is_pressed()):
+        button = 5
+      if ((button_b.is_pressed()) and (button_a.is_pressed())):
+        button = 2
+    count = count + inc
+    showpix(count,button)
+    answer = answer + str(button)
+    while ((button_a.is_pressed()) or (button_b.is_pressed()) ):
+           sleep(10)
+    button = 0
+    
+sleep(100)
+display.show(Image.ALL_CLOCKS, wait = True, delay=100)
+display.show(Image.ALL_CLOCKS, wait = True, delay=100)
+
+
+
+sleep(1000)
+if (answer == solution ):
+  display.show(Image.HAPPY)
+  sleep(3000)
+  display.scroll("1234 ", wait = False, loop = True)
+  while True:
+    if (accelerometer.current_gesture() == "shake"):
+      reset()
+else:
+  display.show(Image.NO)
+  while True:
+    if (accelerometer.current_gesture() == "shake"):
+      reset()
+  
+while True:
+  sleep(10)
+  
+
+
+
+// Use this to program Microbit (generating Hex)
+http://python.microbit.org/v/1
+
+// Use this to test the code (emulator)
+https://create.withcode.uk/python/4FF
+
+// API is there:
+http://microbit-micropython.readthedocs.io/en/latest/button.html
+http://microbit-micropython.readthedocs.io/en/latest/tutorials/introduction.html
