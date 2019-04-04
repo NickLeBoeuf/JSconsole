@@ -82,6 +82,7 @@
 				  PIXI.sound.filtersAll = [];
 				  timer.start();
 				  break;
+				// Mode Panic (test)
 				case "PANIC":
 				  panicmode = 1;
 				  pagersound.loop = true;
@@ -89,6 +90,7 @@
 				  timer.doublespeedinit();
 				  break;
 				case "PANIC2":
+				case "98765431212":
 				  panicmode = 2;timer.doublespeedstop();
 				  break;				  
                 // Riddle Quizz musical = 4715
