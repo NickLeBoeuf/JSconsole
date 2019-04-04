@@ -93,22 +93,91 @@
 				  break;				  
                 // Riddle Quizz musical = 4715
 				case "ECOUTE 1":
+				  stopallsounds();
 				  jackson5sound.play();
 				  break;
 				case "ECOUTE 10":
+   				  stopallsounds();
 				  u2sound.play();
 				  break;
 				case "ECOUTE 100":
+   				  stopallsounds();				  
 				  whitestripessound.play();
 				  break;
 				case "ECOUTE 1000":
-				  vivaldisound.play();
+   				  stopallsounds();
+   				  vivaldisound.play();
 				  break;
+				// Riddle Lords of the rings
+				case "ANGERTHAS":
+   				  stopallsounds();
+   				  lordskingsound.play();
+				  consoleText.text += "Ecoutez ! Qui est donc le (petit) heros de\ncette fresque medievale fantastique ?";
+				  tolkien =-1;
+				  break;
+				case "FRODON":
+   				  stopallsounds();				  
+				  lordshobbitsound.play();
+				  consoleText.text += "Bravo ! A present, quel est le nom de\nl'auteur du Seigneur des Anneaux ?";
+				  tolkien = 0;
+				  break;
+				case "TOLKIEN":
+ 				  if (tolkien == 0) {
+   				    stopallsounds();
+ 				    lordstristesound.play();
+ 				    consoleText.text += "Facile... Mais qui est mort en l'annee 3440\ndu Second Age de la Terre du Mileu ?";
+ 				    tolkien = 1;
+ 				  } else {
+					if (tolkien == 1) {
+   				      stopallsounds();
+   				      lordstristesound.play();
+ 				      consoleText.text += "Il va vous falloir un manuel d'histoire de la Terre du Milieu...";
+ 				      tolkien = 2;} else {
+					  if (tolkien == 2) {
+   				        stopallsounds();						
+						lordstristesound.play();
+ 				        consoleText.text += "Dernier indice : Appendice B...";
+ 				        tolkien = 0;}
+ 				    }
+				  }    
+				    
+ 				  
+ 				  break;
+ 				case "ANARION":
+   				  stopallsounds();
+ 				  lordskingsound.play();
+ 				  consoleText.text += "Bien joue ! Vous avez gagne le droit de\nfouiller le jeu de flechettes !";
+ 				  tolkien =3;
+ 				  break;
+				case "1239129":
+				  if (tolkien == 3) {
+    			    stopallsounds();
+  				    lordsok1sound.play();
+  				    consoleText.text += "--== un anneau ==--";
+  				    tolkien = 4;
+				  }
+ 				  break;
+				case "8391224":
+   				  if (tolkien == 4) {
+   				    stopallsounds();
+ 				    lordsok2sound.play();
+ 				    consoleText.text += "--== pour les gouverner ==--";
+ 				    tolkien = 5;
+ 				  }
+ 				  break;
+ 				case "839129":
+   				  if (tolkien == 5) {
+					stopallsounds();
+ 				    lordsok3sound.play();
+ 				    consoleText.text += "--== TOUS ! ==--";
+ 				    tolkien = 5;
+				  }
+ 				  break;
+
+				// other commands
+				
 				case "STOP":
-				  jackson5sound.stop();
-				  vivaldisound.stop();
-				  u2sound.stop();
-				  whitestripessound.stop();
+				  stopallsounds();
 				  break;				  
 				case "":
 		          debugrequest = 0;

@@ -20,9 +20,28 @@
 	let vivaldisound = new PIXI.sound.Sound.from({url: sndfolder+'vivaldi.wav', singleInstance: true});
 	let u2sound = new PIXI.sound.Sound.from({url: sndfolder+'u2.wav', singleInstance: true});
 	let whitestripessound = new PIXI.sound.Sound.from({url: sndfolder+'thewhitestripes.wav', singleInstance: true});
+	let lordskingsound = new PIXI.sound.Sound.from({url: sndfolder+'lords_king.mp3', singleInstance: true});
+	let lordshobbitsound = new PIXI.sound.Sound.from({url: sndfolder+'lords_hobbit.mp3', singleInstance: true});
+	let lordstristesound = new PIXI.sound.Sound.from({url: sndfolder+'lords_triste.mp3', singleInstance: true});
+	let lordsok1sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok1.mp3', singleInstance: true});
+	let lordsok2sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok2.mp3', singleInstance: true});
+	let lordsok3sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok3.mp3', singleInstance: true});
+
 
      // Put a phone filter to make it more realistic
     u2sound.filters = [new PIXI.sound.filters.TelephoneFilter()];
     vivaldisound.filters = [new PIXI.sound.filters.TelephoneFilter()];
     jackson5sound.filters = [new PIXI.sound.filters.TelephoneFilter()];
     whitestripessound.filters = [new PIXI.sound.filters.TelephoneFilter()];
+  
+    // stop all sounds
+    function stopallsounds() {
+	  jackson5sound.stop();
+	  vivaldisound.stop();
+	  u2sound.stop();
+	  whitestripessound.stop();
+	  lordskingsound.stop();
+	  lordshobbitsound.stop();
+	  lordstristesound.stop();
+	}
+		
