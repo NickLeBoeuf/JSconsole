@@ -26,3 +26,13 @@
 	const TEXT_DEBUGREQ=   "## Debug mode requested - Enter Password";
     const TEXT_DEBUGENTRY= "## Password correct\n## Entering Debug mode";				  
     const TEXT_PASSWDCORRECT = "## Password correct - Raising Security Level";
+
+
+    // Some riddles
+    const RIDDLE_MORSECODE = "L SLS SSL SSLS SSLS SL SSL L SLLS LLSSS SSLLL LLLSS";   // Truffaut p728
+    const RIDDLE_MORSERATIO = 1;
+    const RIDDLE_MORSESHORT = 50*RIDDLE_MORSERATIO;
+    const RIDDLE_MORSELONG  = 3*RIDDLE_MORSESHORT;
+    const RIDDLE_MORSEPAUSE = RIDDLE_MORSESHORT;
+    const RIDDLE_MORSESPACE = 3*RIDDLE_MORSESHORT;
+ 

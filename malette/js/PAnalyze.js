@@ -110,6 +110,11 @@
    				  stopallsounds();
    				  vivaldisound.play();
 				  break;
+				// Riddle morse code
+				case "OTARIE":
+				  morsecode = 1;
+				  consoleText.text += "Avec deux Grandes Dents...";
+				  break;
 				// Riddle Lords of the rings
 				case "ANGERTHAS":
    				  stopallsounds();

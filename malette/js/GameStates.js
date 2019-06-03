@@ -105,8 +105,39 @@
 		  securitylevelText.text = securitylevel.getstring();
 		  timerText.scale.set(1,1);
 	  }
+	  
+	  
+	  // Dealing with the Morse code Flashing
+	  //RIDDLE_MORSESHORT 
+	  //RIDDLE_MORSELONG  
+	  //RIDDLE_MORSEPAUSE 
+	  //RIDDLE_MORSESPACE 
+	  
+	  if (morsecode == 1) { // init
+		var morsemessage = "L.S.L L.L.S"; //RIDDLE_MORSECODE;
+		var morsemaxcnt = morsemessage.length;
+		var morsecnt = 1;
+		var morseletter = morsemessage[morsecnt];
+		var morsechar = decodemorse(morseletter);
+		morsecode = 2; // launch the message
+	} else if (morsecode == 2) {
+	    consoleText.text += morseletter;
+	    if ((morseletter == "S") || (morseletter == "L")) {consoleText.text += "FLASH";}
+	    if ((morseletter == " ") || (morseletter == ".")) {consoleText.text += "BLACK";}
+	    morsechar = morsechar - 1;
+	    if (morsechar == 0) {
+	      morsecnt++;
+	      morseletter = morsemessage[morsecnt];
+	      morsechar = decodemorse(morseletter);
+	    }
+	 
+	    if (morsecnt == morsemaxcnt) { morsecode = 3;} // End of message 
+	} else if (morsecode == 3) {
+		// Reset the screen
+		morsecode = 0;
+		consoleText.text += "Alors, ou se trouve donc le prochain indice ?";					  	  
 	}
-    
+  }
 	function win(delta) {
 		//app.stage.removeChild(timerText);
 		app.stage.removeChild(promptText);
@@ -178,3 +209,12 @@
 	}
 	
 	
+    function decodemorse(letter) {
+		switch (letter) {
+		  case "S": {return RIDDLE_MORSESHORT;break;}
+		  case "L": {return RIDDLE_MORSELONG; break;}
+		  case ".": {return RIDDLE_MORSEPAUSE; break;}
+		  case " ": {return RIDDLE_MORSESPACE; break;}
+	  }
+    }
+  
