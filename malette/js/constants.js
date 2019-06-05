@@ -29,10 +29,13 @@
 
 
     // Some riddles
-    const RIDDLE_MORSECODE = "L SLS SSL SSLS SSLS SL SSL L SLLS LLSSS SSLLL LLLSS";   // Truffaut p728
-    const RIDDLE_MORSERATIO = 1;
+    // The Morse Riddle: Truffaut p728
+    const RIDDLE_MORSECODE = "L S.L.S S.S.L S.S.L.S S.S.L.S S.L S.S.L L S.L.L.S L.L.S.S.S S.S.L.L.L L.L.L.S.S";   // Truffaut p728
+    const RIDDLE_MORSERATIO = 0.4;
     const RIDDLE_MORSESHORT = 50*RIDDLE_MORSERATIO;
     const RIDDLE_MORSELONG  = 3*RIDDLE_MORSESHORT;
     const RIDDLE_MORSEPAUSE = RIDDLE_MORSESHORT;
     const RIDDLE_MORSESPACE = 3*RIDDLE_MORSESHORT;
+    //
+    
  

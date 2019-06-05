@@ -114,28 +114,31 @@
 	  //RIDDLE_MORSESPACE 
 	  
 	  if (morsecode == 1) { // init
-		var morsemessage = "L.S.L L.L.S"; //RIDDLE_MORSECODE;
-		var morsemaxcnt = morsemessage.length;
-		var morsecnt = 1;
-		var morseletter = morsemessage[morsecnt];
-		var morsechar = decodemorse(morseletter);
+		morsemessage = RIDDLE_MORSECODE;
+		morsemaxcnt = morsemessage.length;
+		morsecnt = 0;
+		morseletter = morsemessage[morsecnt];
+		morsechar = decodemorse(morseletter);
 		morsecode = 2; // launch the message
 	} else if (morsecode == 2) {
-	    consoleText.text += morseletter;
-	    if ((morseletter == "S") || (morseletter == "L")) {consoleText.text += "FLASH";}
-	    if ((morseletter == " ") || (morseletter == ".")) {consoleText.text += "BLACK";}
+	    //consoleText.text += morseletter;
+	    if ((morseletter == "S") || (morseletter == "L")) {backgroundimg.tint = 0x0000FF;}
+	    if ((morseletter == " ") || (morseletter == ".")) {backgroundimg.tint = 0xFFFFFF;}
 	    morsechar = morsechar - 1;
 	    if (morsechar == 0) {
 	      morsecnt++;
 	      morseletter = morsemessage[morsecnt];
 	      morsechar = decodemorse(morseletter);
+     	  if (morseletter == " ")  { backspacesound.play();}
+	      //consoleText.text = morsecnt;
 	    }
-	 
+	    	    
 	    if (morsecnt == morsemaxcnt) { morsecode = 3;} // End of message 
 	} else if (morsecode == 3) {
 		// Reset the screen
+		backgroundimg.tint = 0xFFFFFF;
 		morsecode = 0;
-		consoleText.text += "Alors, ou se trouve donc le prochain indice ?";					  	  
+		consoleText.text += "\nAlors, ou se trouve donc le prochain indice ?";					  	  
 	}
   }
 	function win(delta) {
