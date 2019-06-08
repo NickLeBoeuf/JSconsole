@@ -75,9 +75,12 @@
 		  else 
 		  style.fill = nodebugstylefill;
 
-      // Enter in panic mode
+      // Enter in panic mode at 45,30,15 minutes left
+      if ((timer.get()=="15 00") || (timer.get()=="45 00") || (timer.get()== "30 00"))
+        { panicmode =1; pagersound.loop = true;
+		  pagersound.play();timer.doublespeedinit();}
      
-     
+      // Panic mode tilting
       if (panicmode == 1) {
 		  var tiltspeed = 0x0404;
 		  var scaletextspeed = 0.02;

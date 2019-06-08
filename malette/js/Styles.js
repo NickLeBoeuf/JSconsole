@@ -47,7 +47,7 @@
 	    fontSize: 30,
 	    fontStyle: 'normal',
 	    fontWeight: 'bold',
-	    fill: ['#7f5c28', '#9f7c48'], // gradient
+	    fill: ['#7f7c28', '#9f9c48'], // gradient
 	    strokeThickness: 0,
 	    dropShadow: false,
 	    wordWrap: true,

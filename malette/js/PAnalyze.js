@@ -82,7 +82,7 @@
 				  PIXI.sound.filtersAll = [];
 				  timer.start();
 				  break;
-				// Mode Panic (test)
+				// Mode Panic (test) __________________________________
 				case "PANIC":
 				  panicmode = 1;
 				  pagersound.loop = true;
@@ -93,7 +93,7 @@
 				case "98765431212":
 				  panicmode = 2;timer.doublespeedstop();
 				  break;				  
-                // Riddle Quizz musical = 4715
+                // Riddle Quizz musical = 4715 ________________________
 				case "ECOUTE 1":
 				  stopallsounds();
 				  jackson5sound.play();
@@ -110,12 +110,12 @@
    				  stopallsounds();
    				  vivaldisound.play();
 				  break;
-				// Riddle morse code
+				// Riddle morse code __________________________________
 				case "OTARIE":
 				  morsecode = 1;
 				  consoleText.text += "Avec deux Grandes Dents...";
 				  break;
-				// Riddle Lords of the rings
+				// Riddle Lords of the rings __________________________
 				case "ANGERTHAS":
    				  stopallsounds();
    				  lordskingsound.play();
@@ -181,7 +181,7 @@
 				  }
  				  break;
 
-				// other commands
+				// other commands _____________________________________
 				
 				case "STOP":
 				  stopallsounds();
