@@ -79,6 +79,7 @@
       if ((timer.get()=="15 00") || (timer.get()=="45 00") || (timer.get()== "30 00"))
         { panicmode =1; pagersound.loop = true;
 		  pagersound.play();timer.doublespeedinit();}
+	  // TODO Set panicmode in a browser variable, if not a simple F5 removes it !
      
       // Panic mode tilting
       if (panicmode == 1) {
