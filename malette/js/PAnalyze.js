@@ -84,14 +84,14 @@
 				  break;
 				// Mode Panic (test) __________________________________
 				case "PANIC":
-				  panicmode = 1;
+				  localStorage.setItem('panicmode', 1);
 				  pagersound.loop = true;
 				  pagersound.play();
 				  timer.doublespeedinit();
 				  break;
 				case "PANIC2":
 				case "98765431212":
-				  panicmode = 2;timer.doublespeedstop();
+				  localStorage.setItem('panicmode', 2);timer.doublespeedstop();
 				  break;				  
                 // Riddle Quizz musical = 4715 ________________________
 				case "ECOUTE 1":
@@ -105,7 +105,7 @@
 				case "ECOUTE 100":
    				  stopallsounds();				  
 				  whitestripessound.play();
-				  break;
+			
 				case "ECOUTE 1000":
    				  stopallsounds();
    				  vivaldisound.play();

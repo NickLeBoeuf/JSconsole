@@ -3,6 +3,17 @@
 <head>
   <meta charset="utf-8">
   <title>Malette</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0px;
+      border: 0;
+      resize: 1;
+      overflow: hidden; /*  Disable scrollbars */
+      display: block;  /* No floating content on sides */
+    }
+    </style>
 </head>
   <script src="../pixi/pixi.min.js"></script>
   <script src="../pixi/pixi-sound.js"></script>
@@ -24,7 +35,6 @@
     }
 
 
-
     function gameprogress() {
 	  this.level = -1;
 	}
@@ -42,16 +52,20 @@
 		}
 	}
 	
-	
-	
     // Hour function
     function heure() {
       var date = new Date();
   	  return date.getHours() + " " + date.getMinutes() + " " + date.getSeconds();
 	}
 	
-
-
+	
+	// TODO: clean game riddles section
+	// TODO: the timer x,y,scale is not linked to the resize window
+	
+	// TODO: The app does not work with Chrome, pb of loader - constants is not load before execution of html
+	// TODO: Progress bar with a rectangle on the right side of the screen to visually see the timer
+	
+	
       	
     // Game riddles
     const MAXLEVEL = 2; // This indicates how many riddles must be solved to win
@@ -68,11 +82,15 @@
       	
 	let state;
 	
-	var app = new PIXI.Application(800,600,{backgroundColor: 0x0} );
+	var app = new PIXI.Application({width:WIDTH,height:HEIGHT,backgroundColor: 0,
+	 //resolution: window.devicePixelRatio || 1,
+     autoResize : true});
 	document.body.appendChild(app.view);
 	
-
-
+    const container = new PIXI.Container();
+    container.x = 0;
+    container.y = 0;
+    
 	
 	var timer = new Timer();
 	var consolePrompt = new PAnalyze();
@@ -80,7 +98,7 @@
     var debugrequest = 0;
     var securitylevel = new gameprogress();
     var tiltdirection = -1;
-    var panicmode = 0;
+    //var panicmode = 0;
     var tolkien = -1;
     var morsecode = 0;
     var morsemessage;
@@ -91,21 +109,27 @@
     var morsecode; 
      
      
-    let backgroundimg = new PIXI.Sprite.fromImage(img4[0]);    
-    backgroundimg.setTransform(-20,-30,img4[1],img4[2]);
+    let backgroundimg = new PIXI.Sprite.from(img6[0]);    
+    backgroundimg.setTransform(-20,-30,img6[1],img6[2]);
     backgroundimg.tint = "0xFFFFFF";
    
    
 
     // Add elements to canvas
+    app.stage.addChild(container);
+    
+    //app.stage.addChild(backgroundimg);
+    //app.stage.addChild(timerText);
+	//app.stage.addChild(promptText);
+	//app.stage.addChild(consoleText);
+	//app.stage.addChild(debugText);
+	//app.stage.addChild(securitylevelText);
 
-    app.stage.addChild(backgroundimg);
-    app.stage.addChild(timerText);
-	app.stage.addChild(promptText);
-	app.stage.addChild(consoleText);
-	app.stage.addChild(debugText);
-	app.stage.addChild(securitylevelText);
-
+    container.addChild(backgroundimg);    app.stage.addChild(timerText);
+	container.addChild(promptText);
+	container.addChild(consoleText);
+	container.addChild(debugText);
+	container.addChild(securitylevelText);
   
     PIXI.sound.stopAll();
     PIXI.sound.stopAll();
@@ -115,6 +139,8 @@
     //Set the game state (play, win, lose)
     if (timer.isrunning == 0) {state = intro;} else {state = play;}
  
+ 
+    //container.scale.x = 2;
     //Start the game loop 
     app.ticker.add(delta => gameLoop(delta));
     
@@ -122,6 +148,22 @@
 	  //Update the current game state:
 	  state(delta);
 	}
+	
+    window.addEventListener('resize', resize);
+
+    function resize() {
+
+	// Get the parent
+	const parent = app.view.parentNode;
+   
+	// Resize the renderer
+	app.renderer.resize(parent.clientWidth, parent.clientHeight);
+    container.scale.x = app.screen.width/WIDTH;
+    container.scale.y = app.screen.height/HEIGHT;
+    //console.log(parent.clientHeight);
+    }
+
+resize();	
 	
 
   </script>

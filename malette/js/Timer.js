@@ -3,23 +3,6 @@
     // Timer class /////////////////////////////////////////////////////
 
      
-    if(!localStorage.getItem('timercurrentvalue')) {
-	  localStorage.setItem('timercurrentvalue', 0);
-	}
-    if(!localStorage.getItem('timerlaststartvalue')) {
-	  localStorage.setItem('timerlaststartvalue', MAXTIMER);
-	}
-    if(!localStorage.getItem('timerstarttime')) {
-	  localStorage.setItem('timerstarttime', MAXTIMER);
-	}
-    if(!localStorage.getItem('timerrunning')) {
-	  localStorage.setItem('timerrunning', 0);
-	}
-	
-	
-	//const TIMERPHASE = [40,30,20,10,5,2,1,0]; // Timer got 8 phases
-	const TIMERPHASE = [21,18,15,12,9,6,3,0]; // Timer got 8 phases
-    //                  0   1  2  3 4 5 6 7
 
     function Timer() {
 	  this.maxvalue = new Date(MAXTIMER); 
@@ -69,6 +52,7 @@
 	  var timeelapsed = new Date(currenttime - this.starttime);
 	  this.currentvalue = new Date(this.laststartvalue - timeelapsed);
       // double speed if required
+      if (localStorage.getItem('panicmode') == 1) { this.doublespeed = 1;}
       if (this.doublespeed == 1 ) {
 		if (this.currentvalue.getSeconds() != this.secondvalue) {
 			this.starttime.setTime(this.starttime.getTime() - 1000); // speed up timer

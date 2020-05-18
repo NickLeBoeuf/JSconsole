@@ -5,8 +5,9 @@
     const img1 = [imgfolder+'black.jpg',0.5,0.5];
     const img2 = [imgfolder+'blackglass.png',0.45,0.5];
     const img3 = [imgfolder+'Layer1.png',0.5,0.5];
-    const img4 = [imgfolder+'white.jpg',0.65,0.8];
+    const img4 = [imgfolder+'white.jpg',1.65,0.8];
     const img5 = [imgfolder+'white2.jpg',0.5,0.5];
+    const img6 = [imgfolder+'gray852x480.jpg',WIDTH/840,HEIGHT/460];
     
 // SOUNDS    
    	const sndfolder = ['sound/'];

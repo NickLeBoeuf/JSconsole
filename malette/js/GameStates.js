@@ -21,8 +21,8 @@
 	  // Display countdown
         
                 
-        timerstyle.fill = ['#000000', '#005500']
-        if (panicmode == 0) {
+        timerstyle.fill = ['#FFCCCC', '#FF5555']
+        if (localStorage.getItem('panicmode') == 0) {
 			timerText.x = 650;
 			timerText.y = 20
         switch (timer.phase) {
@@ -82,7 +82,7 @@
 	  // TODO Set panicmode in a browser variable, if not a simple F5 removes it !
      
       // Panic mode tilting
-      if (panicmode == 1) {
+      if (localStorage.getItem('panicmode') == 1) {
 		  var tiltspeed = 0x0404;
 		  var scaletextspeed = 0.02;
 		  if (tiltdirection == -1 ) {
@@ -93,7 +93,7 @@
 	          } else {tiltdirection = 1;}
 		  }
 		  if (tiltdirection == 1 ) {
-          	  if (backgroundimg.tint < 0xFF2020) {
+          	  if (backgroundimg.tint < 0xFF4040) {
 		          backgroundimg.tint = backgroundimg.tint + tiltspeed;
 		          timerText.scale.set(timerText.scale.x-scaletextspeed,timerText.scale.y-scaletextspeed);
 		          timerText.x = timerText.x + scaletextspeed*50;
@@ -102,10 +102,10 @@
 	      securitylevelText.text = "Panic Mode !\nEntrez vide le code magique\nou sinon..."   
 	  }
 
-      if (panicmode == 2) {
+      if (localStorage.getItem('panicmode') == 2) {
 		  pagersound.stop();
 		  backgroundimg.tint = 0xFFFFFF;
-		  panicmode = 0;
+		  localStorage.setItem('panicmode', 0);
 		  securitylevelText.text = securitylevel.getstring();
 		  timerText.scale.set(1,1);
 	  }
@@ -180,7 +180,7 @@
 	function intro(delta) {
 		app.stage.removeChild(timerText);
 		
-		consoleText.y = 60;
+		consoleText.y = WIDTH/8;
 	    consoleText.text = "Bonjour,\n Je vous félicite d'être arrivés jusqu'ici. \n";
 	    consoleText.text = consoleText.text + " Mais le jeu ne fait que commencer... \n";
         consoleText.text = consoleText.text + " La suite risque de se révéler plus ardue,\n";
@@ -190,25 +190,28 @@
         consoleText.text = consoleText.text + "\n Tapez READY pour commencer... \n Bonne Chance !\n";
 	    securitylevelText.text = "PRETS?";
 	    securitylevelText.anchor.set(0.5,0.5);
-	    securitylevelText.setTransform(300,380,1.5,1.5,securitylevelText.rotation);
+	    securitylevelText.setTransform(WIDTH/2,HEIGHT/2.5,1.5,1.5,securitylevelText.rotation);
 	    securitylevelText.rotation = securitylevelText.rotation + 0.015;
 	    infostyle.fill = ['#ff0000', '#aa0000']; 	
 	    
-	    
-	    timerText.x = 650;
-	    timerText.y = 20;
+	   
+	    timerText.x = TIMERX;
+	    timerText.y = TIMERY;
 	    timerText.scale.set(1,1);
-        timerstyle.fill = ['#578f38', '#376f18'];
+        //timerstyle.fill = ['#578f38', '#376f18'];
         
         if (securitylevel.level == 0) {
 		  state = play;
 		  pagersound.stop();
 		  opendoorsound.play();
-		  consoleText.y = 300;
+		  consoleText.x = CONSOLEX;
+	      consoleText.y = CONSOLEY;	
 		  consoleText.text = "Démarrage du Compte à Rebours...\n";
 		  app.stage.addChild(timerText);
+		  securitylevelText.text = securitylevel.getstring();
 		  securitylevelText.anchor.set(0,0);
-		  securitylevelText.setTransform(130,150,1,1,0);
+		  securitylevelText.setTransform(WIDTH/3,HEIGHT/3,1,1,0);
+		  infostyle.fill = ['#7f7c28', '#9f9c48'] // gradient
 	    };
 	    
 	    // When dead, simply type blindly TIMER RESET and reload the page
