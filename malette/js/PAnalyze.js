@@ -90,7 +90,7 @@
 				  timer.doublespeedinit();
 				  break;
 				case "PANIC2":
-				case "98765431212":
+				case "987654312127420":
 				  localStorage.setItem('panicmode', 2);timer.doublespeedstop();
 				  break;				  
                 // Riddle Quizz musical = 4715 ________________________
@@ -105,7 +105,7 @@
 				case "ECOUTE 100":
    				  stopallsounds();				  
 				  whitestripessound.play();
-			
+			      break;
 				case "ECOUTE 1000":
    				  stopallsounds();
    				  vivaldisound.play();
