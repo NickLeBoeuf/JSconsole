@@ -180,6 +180,13 @@
  				    tolkien = 5;
 				  }
  				  break;
+				// Riddle Quizz cuisine __________________________
+				case "TOPCHEF":
+   				  stopallsounds();
+   				  topchefsound.play();
+   				  consoleText.text += "C'est parti pour un Quizz cuisine du monde.\nquestion 1: Quel fromage trouve t on dans le Welch ?";
+				  kitchen =1;
+				  break;
 
 				// other commands _____________________________________
 				

@@ -106,7 +106,8 @@
     var morsecnt;
     var morseletter; 
     var morsechar;
-    var morsecode; 
+    var morsecode;
+    var kitchen =0; 
      
      
     let backgroundimg = new PIXI.Sprite.from(img6[0]);    
@@ -125,7 +126,8 @@
 	//app.stage.addChild(debugText);
 	//app.stage.addChild(securitylevelText);
 
-    container.addChild(backgroundimg);    app.stage.addChild(timerText);
+    container.addChild(backgroundimg);
+    container.addChild(timerText);
 	container.addChild(promptText);
 	container.addChild(consoleText);
 	container.addChild(debugText);

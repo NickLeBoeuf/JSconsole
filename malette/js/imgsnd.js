@@ -27,7 +27,7 @@
 	let lordsok1sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok1.mp3', singleInstance: true});
 	let lordsok2sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok2.mp3', singleInstance: true});
 	let lordsok3sound = new PIXI.sound.Sound.from({url: sndfolder+'lords_ok3.mp3', singleInstance: true});
-
+    let topchefsound = new PIXI.sound.Sound.from({url: sndfolder+'topchef.mp3', singleInstance: true});
 
      // Put a phone filter to make it more realistic
     u2sound.filters = [new PIXI.sound.filters.TelephoneFilter()];
