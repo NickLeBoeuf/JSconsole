@@ -187,7 +187,18 @@
    				  consoleText.text += "C'est parti pour un Quizz cuisine du monde.\nquestion 1: Quel fromage trouve t on dans le Welch ?";
 				  kitchen =1;
 				  break;
-
+				  
+				// Riddle Bali __________________________
+				case "SIDARAP":
+   				  stopallsounds();
+   				  rapsound.play();
+   				  consoleText.text += "C'est bizarre comme mot-clef pour un voyage a Bali...Cherchez encore !";
+   				  break;
+				case "PARADIS":
+   				  stopallsounds();
+   				  gamelansound.play();
+   				  consoleText.text += "Bravo !\nVous ne gagnez helas pas un voyage a Bali, mais le seulement le prochain indice:\ncelui-ci";
+   				  break;
 				// other commands _____________________________________
 				
 				case "STOP":
